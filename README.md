@@ -1,8 +1,8 @@
 # Compile
 
 ```
->ifort -O2 occ_to_det.f90  -o f.out
->icc   -O2  occ_to_det.c  -o c.out
+>ifort -O2 occ2det.f90  -o f.out
+>icc   -O2  occ2det.c  -o c.out
 ```
 
 
