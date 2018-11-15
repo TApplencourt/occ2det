@@ -33,9 +33,8 @@ unsigned long n_combinaison(unsigned n, unsigned k) {
     unsigned long r = 1;
     unsigned d;
     if (k > n) return 0;
-    for (d=1; d <= k; d++) {
-            r *= n--;
-            r /= d;
+    for (d=1; d <= k; d++, n--) {
+            r = (r*n) / d;
      }
      return r;
 }
