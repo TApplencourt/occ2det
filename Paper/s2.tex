@@ -1,6 +1,11 @@
 \documentclass[aip,jcp,reprint,showkeys]{revtex4-1}
 
 \usepackage{graphicx,bm,xcolor,hyperref,amsmath,amssymb,amsfonts,float}
+\usepackage{algorithmicx}
+\usepackage{algcompatible}
+\usepackage{algpseudocode} 
+\newcommand{\LeftComment}[1]{\State {\scriptsize /* \textit{#1} */}}
+
 
 
 
@@ -166,10 +171,43 @@ orbital indices, and replaces the value of the list by
 determinant, or \texttt{0} if it originates from the $\dn$ determinant. 
 Figure~\ref{fig:mapping} illustrates this mapping.
 
+\begin{figure}
+\begin{algorithmic}
+\Function{GenPermutations}{$n,m$}
+  \LeftComment{$n$: Number of bits set to 1}
+  \LeftComment{$m$: Number of bits set to 0}
+  \State $k \gets 0$
+  \State $v \gets (1 \ll n) - 1$ 
+  \State $w[0] \gets v$
+  \While {$v < \left(1 \ll (n+m) \right) $} 
+    \State $k \gets k+1$
+%    \LeftComment{Set the least significant $0$ bit of $v$ to $1$}
+    \State $t \gets v \vee (v-1)$
+%    \LeftComment{Set to $1$ the most significant bit to change}
+    \State $t' \gets t + 1$\
+%    \LeftComment{Set to $0$ the least significant bit to change}
+%    \LeftComment{($ctz$ counts the number of trailing zeros)}
+    \State $t'' \gets \left((\neg t \wedge (t+1) )-1 \right) \gg (ctz(v)+1)$
+%    \LeftComment{Add the remaining $1$ bits}
+    \State $w[k] \gets t' \vee t''$
+  \EndWhile
+  \State \Return $w$
+\EndFunction
+\end{algorithmic}
+\caption{Anderson's algorithm to generate all the patterns of $n$ bits set to
+$1$ in an integer of $n+m$ bits in lexicographical order.
+$i \ll n$ : shifts $i$ $n$ bits to the left, and 
+$i \gg n$ : shifts $i$ $n$ bits to the right.}
+
+\label{fig:algo}
+\end{figure}
+
 To generate all the spin flips which keeps the number of $\up$ and $\dn$
 electrons constant, we need to build all the bit strings with a $n$
-bits set to one and $m$ bits set to zero. 
-
+bits set to one and $m$ bits set to zero.
+Sean Eron Anderson\cite{NextBit} has proposed a fast algorithm to generate all
+the patterns of $n$ bits set to $1$ in an integer, and it is presented in
+figure~\ref{fig:algo}.
 
 
 
@@ -190,6 +228,8 @@ bits set to one and $m$ bits set to zero.
 
 %----------------------------------------------------------------
 \begin{acknowledgments}
+The authors gratefully acknowledge Sean Eron Anderson for creating the 
+\emph{Bit Twiddling Hacks} web page.
 This work was performed using HPC resources from CALMIP (Toulouse) under
 allocations 2018-0510 and 2018-18005 and from GENCI-TGCC (Grant
 2018-A0040801738).

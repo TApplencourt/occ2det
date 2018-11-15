@@ -117,7 +117,8 @@ void gen_permutation(unsigned const n_orbital, unsigned const n_int, unsigned co
         // Compute the permutation
         // https://graphics.stanford.edu/~seander/bithacks.html#NextBitPermutation
         unsigned const t = p | (p - 1); 
-        p = (t + 1) | (((~t & -~t) - 1) >> (__builtin_ctz(p) + 1));
+        //p = (t + 1) | (((~t & -~t) - 1) >> (__builtin_ctz(p) + 1));
+        p = (t + 1) | (((~t & (t+1)) - 1) >> (__builtin_ctz(p) + 1));
     }
 }
 
@@ -145,7 +146,7 @@ int main(int argc, char **argv)
 
     gen_permutation(n_orbital, n_int, size_orbital_bucket, occ, n_alpha, &n_det, &l_det_alpha,  &l_det_beta);
 
-    printf("n_det: %u\n", n_det);
+    printf("n_det: %lu\n", n_det);
   
     // 0 == Production  mode ; 1 == Test mode 
     d = (mode) ? 0 : n_det; 
