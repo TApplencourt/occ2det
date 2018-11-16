@@ -7,7 +7,7 @@
 \newcommand{\LeftComment}[1]{\State {\scriptsize /* \textit{#1} */}}
 
 
-
+\usepackage{hyperref}
 
 \newcommand{\alert}[1]{\textcolor{red}{#1}}
 \newcommand{\ket}[1]{|#1\rangle}
@@ -30,7 +30,7 @@
 \title{A fast algorithm to enforce spin-pure wave functions in selected configuration interaction}
 
 \author{Thomas Applencourt}
-\affiliation{ \alert{Mets ici ton affiliation} }
+\affiliation{Argonne Leadership Computing Facility, Argonne National Laboratory, Argonne, Illinois 60439 USA}
 \author{Anthony Scemama}
 \affiliation{Laboratoire de Chimie et Physique Quantiques, Université de Toulouse, CNRS, UPS, France}
 
@@ -161,11 +161,13 @@ and the bit is one when the singly occupied orbital is of $\up$ spin.}
 \label{fig:mapping}
 \end{figure}
 
+% Je comprend pas Fig1 Pourquoi y a des orbital doublement occuper dans up et down ? Et pourquoi tu a besoin de up et down?
 
 For a given {\sop}, one needs to generate all the possible spin flips that can
 occur in the singly occupied molecular orbitals, keeping the numbers of $\up$
 and $\dn$ electrons fixed. The generated determinants will only differ by the
-singly occupied orbitals, so one first extracts the list of unoccupied molecular
+singly occupied orbitals,
+so one first extracts the list of unoccupied molecular
 orbital indices, and replaces the value of the list by 
 \texttt{1} if the corresponding molecular orbital originates from the $\up$
 determinant, or \texttt{0} if it originates from the $\dn$ determinant. 
@@ -205,18 +207,28 @@ $i \gg n$ : shifts $i$ $n$ bits to the right.}
 To generate all the spin flips which keeps the number of $\up$ and $\dn$
 electrons constant, we need to build all the bit strings with a $n$
 bits set to one and $m$ bits set to zero.
+% Exactement. Ou n c'est le nomber d'electron alpha (ou beta ca change rien) qui etait dans des couche ouverte et  n+m == nonbre de couche ouverte.
 Sean Eron Anderson\cite{NextBit} has proposed a fast algorithm to generate all
 the patterns of $n$ bits set to $1$ in an integer, and it is presented in
 figure~\ref{fig:algo}.
 
+\subsection{Algorithm}
 
-
-
-
-
-
-
-
+\begin{enumerate}
+    \item Generate a determinant where all the bit corresponding to the doubly occupied orbitals is set to one, and zeros otherwise. It correspond to a pattern of determinant \label{det:pattern}
+    \item Create a sparse representation of the singly occupied orbital.\label{det:sparce}     %2011120 -> [3,4,5]
+    \item Generate the permutations of $N_{alpha}$-singly occupied-orbitals into $N$ singly-occupied-orbital. 
+    \item For each permutation:
+        \begin{enumerate}
+            \item Initialize a alpha and beta determinant corresponding to the pattern defined in \ref{det:pattern}
+            \item For each bit in the permutation
+            \begin{enumerate}
+                \item Find the corresponding position of this bit in the alpha or beta determinant using the dictionary created in \ref{det:sparce}.
+                \item If the permutation bit is set to one, set the correspond bit of the \textbf{alpha}-determinant to one
+                \item  If the permutation bit is set to zero, set the correspond bit of the \textbf{beta}-determinant to one
+            \end{enumerate}
+        \end{enumerate}
+\end{enumerate}
 
 
 
