@@ -1,13 +1,13 @@
 \documentclass[aip,jcp,reprint,showkeys]{revtex4-1}
 
 \usepackage{graphicx,bm,xcolor,hyperref,amsmath,amssymb,amsfonts,float}
+\usepackage{hyperref}
 \usepackage{algorithmicx}
 \usepackage{algcompatible}
 \usepackage{algpseudocode} 
 \newcommand{\LeftComment}[1]{\State {\scriptsize /* \textit{#1} */}}
 
 
-\usepackage{hyperref}
 
 \newcommand{\alert}[1]{\textcolor{red}{#1}}
 \newcommand{\ket}[1]{|#1\rangle}
@@ -161,7 +161,11 @@ and the bit is one when the singly occupied orbital is of $\up$ spin.}
 \label{fig:mapping}
 \end{figure}
 
+
 % Je comprend pas Fig1 Pourquoi y a des orbital doublement occuper dans up et down ? Et pourquoi tu a besoin de up et down?
+
+% Ah oui. Tu as raison! If faut mettre 1 partout. J'ai mis up et down pour qu'on voit pourquoi il y a 1 ou 0 au milieu. Je changerai la figure demain.
+
 
 For a given {\sop}, one needs to generate all the possible spin flips that can
 occur in the singly occupied molecular orbitals, keeping the numbers of $\up$
@@ -205,7 +209,7 @@ $i \gg n$ : shifts $i$ $n$ bits to the right.}
 \end{figure}
 
 To generate all the spin flips which keeps the number of $\up$ and $\dn$
-electrons constant, we need to build all the bit strings with a $n$
+electrons constant, we need to build all the bit strings with $n$
 bits set to one and $m$ bits set to zero.
 % Exactement. Ou n c'est le nomber d'electron alpha (ou beta ca change rien) qui etait dans des couche ouverte et  n+m == nonbre de couche ouverte.
 Sean Eron Anderson\cite{NextBit} has proposed a fast algorithm to generate all
@@ -213,6 +217,41 @@ the patterns of $n$ bits set to $1$ in an integer, and it is presented in
 figure~\ref{fig:algo}.
 
 \subsection{Algorithm}
+
+
+\begin{figure}
+\begin{algorithmic}
+\Function{GenPermutations}{$n,m$}
+  \LeftComment{$n$: Number of bits set to 1}
+  \LeftComment{$m$: Number of bits set to 0}
+  \State $k \gets 0$
+  \State $v \gets (1 \ll n) - 1$
+  \State $w[0] \gets v$
+  \While {$v < \left(1 \ll (n+m) \right) $}
+    \State $k \gets k+1$
+%    \LeftComment{Set the least significant $0$ bit of $v$ to $1$}
+    \State $t \gets v \vee (v-1)$
+%    \LeftComment{Set to $1$ the most significant bit to change}
+    \State $t' \gets t + 1$\
+%    \LeftComment{Set to $0$ the least significant bit to change}
+%    \LeftComment{($ctz$ counts the number of trailing zeros)}
+    \State $t'' \gets \left((\neg t \wedge (t+1) )-1 \right) \gg (ctz(v)+1)$
+%    \LeftComment{Add the remaining $1$ bits}
+    \State $w[k] \gets t' \vee t''$
+  \EndWhile
+  \State \Return $w$
+\EndFunction
+\end{algorithmic}
+\caption{Anderson's algorithm to generate all the patterns of $n$ bits set to
+$1$ in an integer of $n+m$ bits in lexicographical order.
+$i \ll n$ : shifts $i$ $n$ bits to the left, and
+$i \gg n$ : shifts $i$ $n$ bits to the right.}
+
+\label{fig:algo}
+\end{figure}
+
+
+
 
 \begin{enumerate}
     \item Generate a determinant where all the bit corresponding to the doubly occupied orbitals is set to one, and zeros otherwise. It correspond to a pattern of determinant \label{det:pattern}
