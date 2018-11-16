@@ -46,19 +46,21 @@ def gen_occ(n_alpha,n_beta, seed = None, sparsity=0.20):
     random.shuffle(l) 
     return n_alpha, n_beta, l
 
+from typing import List, Tuple
+
 @timing
-def naive(occ, n_alpha, n_beta):
+def naive(occ: List[int], n_alpha: int, n_beta: int) -> List[ Tuple[List[bool],List[bool]]]:
 
     n_orbital = len(occ)
     p =  list(product([0,1],repeat=n_orbital))
-    # Filter alpha
+    # Filter the determinant with the correct number of alpha and beta
     p_alpha = filter(lambda o: sum(o) == n_alpha, p )
     p_beta =  filter(lambda o: sum(o) == n_beta, p )
 
     # All combinaison
     q = product(p_alpha, p_beta)
 
-    # No filter more than double occupied
+    # No filter the determinant who correspond to the required occupation
     return [(l_alpha, l_beta) for l_alpha, l_beta in q if all(a + b == o  for o,a,b in zip(occ,l_alpha,l_beta)) ]
 
 @timing

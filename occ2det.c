@@ -105,7 +105,7 @@ void gen_permutation(unsigned const n_orbital, unsigned const n_int, unsigned co
         
         for ( i = 0 ; i < n_single_orbital; i++){
             bool const o = ( p >> i ) & 1; //index i of permutation p
-            unsigned * const det = (o==1) ? alpha: beta; //Determinant are zero-ed .Modify only if need to set the bit to 1
+            unsigned * const det = o ? alpha: beta; //Determinant are zero-ed .Modify only if need to set the bit to 1
 
             idx = occ_if[i];
             unsigned const det_i = idx / size_orbital_bucket;
