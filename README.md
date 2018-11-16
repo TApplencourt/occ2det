@@ -1,6 +1,6 @@
 # Compile
 
-```
+```bash
 >ifort -O2 occ2det.f90  -o f.out
 >icc   -O2  occ2det.c  -o c.out
 ```
@@ -8,7 +8,7 @@
 
 # Run
 
-```
+```bash
 >./$bin $mode $n_orbital $n_alpha $occ
 ```
 
@@ -16,7 +16,7 @@ mode = 0, production / No output
 mode = 1, testing / Output
 
 
-```
+```bash
 >time ./c.out 0 36 15 1 1 2 2 1 1 1 1 1 1 1 0 2 1 0 1 2 1 1 1 0 2 1 1 2 1 1 2 1 1 1 1 2 1 0 1
 n_int: 2
 n_det: 346104
@@ -39,9 +39,9 @@ sys     0m0.011s
 Use ![hypothesis](https://github.com/HypothesisWorks/hypothesis) to generate random valide
 occupation pattern and number of electrons.
 We check that the C/Fortran implementation give the same result as a naive Python implementation.
-```
-def naive(occ, n_alpha, n_beta):
-
+```python
+from typing import List, Tuple
+def naive(occ: List[int], n_alpha: int, n_beta: int) -> List[ Tuple[List[bool],List[bool]]]:
     n_orbital = len(occ)
     p =  list(product([0,1],repeat=n_orbital))
     # Filter the determinant with the correct number of alpha and beta
@@ -56,6 +56,6 @@ def naive(occ, n_alpha, n_beta):
 ```
 
 
-```
+```bash
 ./validation.py
 ```
