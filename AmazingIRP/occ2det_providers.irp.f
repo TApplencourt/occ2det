@@ -29,7 +29,7 @@ BEGIN_PROVIDER [ integer, n_alpha ]
 ! Number of alpha electrons 
  END_DOC
  character(len=64)              :: buffer
- call get_command_argument(2, buffer)
+ call get_command_argument(3, buffer)
  read(buffer, '(I4)') n_alpha
 END_PROVIDER
 
@@ -107,6 +107,9 @@ BEGIN_PROVIDER [ integer, n_single_orbital ]
  do i=2,n_int
    n_single_orbital = n_single_orbital + popcnt(occ(i,1))
  enddo
+ if (n_single_orbital > 63) then
+   stop 'n_single_orbital too large'
+ endif
 END_PROVIDER
 
 
@@ -144,11 +147,38 @@ BEGIN_PROVIDER [ integer, n_det ]
 END_PROVIDER
 
 
-BEGIN_PROVIDER [ integer, gen_dets, (n_int,2,n_det) ]
+BEGIN_PROVIDER [ integer(bit_kind), gen_dets, (n_int,2,n_det) ]
  implicit none
  BEGIN_DOC
  ! Generated determinants
  END_DOC
+ integer                        :: i, k
+ integer                        :: ipos, iint
+ 
+ integer(bit_kind)              :: v,t,tt
+ integer                        :: idx, ispin
+ integer, parameter             :: addr(0:1) = (/ 2, 1 /)
+
+ ! Set common part on all the determinants
+ do i=1,n_det
+   gen_dets(:,1,i) = occ(:,2)
+   gen_dets(:,2,i) = occ(:,2)
+ enddo
+
+ v = ishft(1,n_alpha) - 1
+
+ do i=1,n_det
+   do k=1,n_single_orbital
+      idx = single_index(k)
+      iint = ishft(idx-1,-log_size_orbital_bucket) + 1
+      ipos = idx-ishft((iint-1),log_size_orbital_bucket)-1
+      ispin = addr ( iand(ishft(v,k),1) )
+      gen_dets(iint,ispin,i) = ibset( gen_dets(iint,ispin,i), ipos)
+   enddo
+   t = ior(v,v-1)
+   tt = t+1
+   v = ior(tt, ishft( iand(not(t),tt) - 1, -trailz(v)-1) )
+ enddo
 
 END_PROVIDER
 
