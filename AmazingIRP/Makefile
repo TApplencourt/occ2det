@@ -1,4 +1,4 @@
-IRPF90 = irpf90 --codelet single_index:100000000 --codelet gen_dets:100 #-a -d
+IRPF90 = irpf90 --codelet single_index:100000000 --codelet gen_dets:10000 #-a -d
 FC     = ifort 
 FCFLAGS= -O3 -g -xHost -I .
 NINJA  = ninja

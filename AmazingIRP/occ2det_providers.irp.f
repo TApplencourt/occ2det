@@ -173,21 +173,28 @@ BEGIN_PROVIDER [ integer(bit_kind), gen_dets, (n_int,2,n_det) ]
  integer                        :: idx, ispin
  integer, parameter             :: addr(0:1) = (/ 2, 1 /)
 
- ! Set common part on all the determinants
- do i=1,n_det
-   gen_dets(:,1,i) = occ(:,2)
-   gen_dets(:,2,i) = occ(:,2)
- enddo
+ integer(bit_kind)              :: tmp_det(4*n_int)
+ integer(bit_kind)              :: n_int_shift
+ integer                        :: n_int_shift_bit
+
+ n_int_shift_bit = size_orbital_bucket - leadz(n_int)
+ n_int_shift = ibset(0, n_int_shift_bit)
 
  v = ishft(1,n_alpha_in_single) - 1
 
  do i=1,n_det
+   tmp_det(:) = 0
    do k=1,n_single_orbital
       idx = single_index(k)
       iint = ishft(idx-1,-log_size_orbital_bucket) + 1
       ipos = idx-ishft((iint-1),log_size_orbital_bucket)-1
       ispin = addr ( iand(ishft(v,1-k),1) )
-      gen_dets(iint,ispin,i) = ibset( gen_dets(iint,ispin,i), ipos)
+      iint = iint + n_int_shift - iand(ishft(v,1+n_int_shift_bit-k),n_int_shift) 
+      tmp_det(iint) = ibset( tmp_det(iint), ipos )
+   enddo
+   do k=1,n_int
+      gen_dets(k,1,i) = ior(occ(k,2), tmp_det(k))
+      gen_dets(k,2,i) = ior(occ(k,2), tmp_det(k+n_int_shift))
    enddo
    t = ior(v,v-1)
    tt = t+1
