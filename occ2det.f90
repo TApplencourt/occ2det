@@ -68,8 +68,10 @@ SUBROUTINE gen_permutation(n_orbital, n_int, size_orbital_bucket, occ, n_alpha)
 
       n_det = n_combinaison(n_single_orbital, n_alpha_f);
 
-      ALLOCATE(l_det_alpha(n_int,n_det))
-      ALLOCATE(l_det_beta(n_int,n_det))
+      IF (.NOT.ALLOCATED(l_det_alpha)) THEN
+        ALLOCATE(l_det_alpha(n_int,n_det))
+        ALLOCATE(l_det_beta(n_int,n_det))
+      ENDIF
 
       p = lshift(1, n_alpha_f) - 1
         
@@ -97,6 +99,8 @@ SUBROUTINE gen_permutation(n_orbital, n_int, size_orbital_bucket, occ, n_alpha)
 
        ENDDO
 
+       DEALLOCATE(occ_if)
+
 
 END SUBROUTINE
 
@@ -113,6 +117,8 @@ program hello
     CHARACTER(LEN=64) :: buffer
     
     INTEGER :: i, d, d_init, mode
+
+    REAL(8) :: t1, t0
 
     call get_command_argument(1, buffer)
     read(buffer, '(I4)') mode
@@ -132,7 +138,14 @@ program hello
         call get_command_argument(i+3, buffer)
         read(buffer, '(I1)') occ(i)
     ENDDO
-    call gen_permutation(n_orbital, n_int, size_orbital_bucket, occ, n_alpha)
+
+    call cpu_time(t0)
+    do i=1,1000
+      call gen_permutation(n_orbital, n_int, size_orbital_bucket, occ, n_alpha)
+    enddo
+    call cpu_time(t1)
+    print *,  'CPU:', (t1-t0)/1000.d0
+
     print*, 'n_det:', n_det
 
     IF (mode.EQ.0) THEN
