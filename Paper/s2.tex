@@ -7,11 +7,12 @@
 \usepackage{algpseudocode} 
 \newcommand{\LeftComment}[1]{\State {\scriptsize /* \textit{#1} */}}
 
-
+\usepackage{tikz,tikzscale}
 
 \newcommand{\alert}[1]{\textcolor{red}{#1}}
 \newcommand{\ket}[1]{|#1\rangle}
 \newcommand{\stwo}{\hat{S}^2}
+\newcommand{\tv}{\mathtt{v}}
 \newcommand{\mb}{\mathtt{b}}
 \newcommand{\md}{\mathtt{d}}
 \newcommand{\mD}{\mathcal{D}}
@@ -21,7 +22,9 @@
 \newcommand{\dn}{\downarrow}
 \newcommand{\Nint}{{N_\text{int}}}
 \newcommand{\Norb}{{N_\text{orb}}}
-\newcommand{\sop}{spatial occupation pattern}
+\newcommand{\sop}{SOP}
+\newcommand{\one}{{\texttt{1}}}
+\newcommand{\zero}{{\texttt{0}}}
 
 
 
@@ -29,7 +32,10 @@
 
 \title{A fast algorithm to enforce spin-pure wave functions in selected configuration interaction}
 
+% Kevin and Thomas : put the authors in the whatever order you prefer
+% Kevin : Is your affiliation correct?
 \author{Thomas Applencourt}
+\author{Kevin Gasperich}
 \affiliation{Argonne Leadership Computing Facility, Argonne National Laboratory, Argonne, Illinois 60439 USA}
 \author{Anthony Scemama}
 \affiliation{Laboratoire de Chimie et Physique Quantiques, Université de Toulouse, CNRS, UPS, France}
@@ -58,16 +64,19 @@ selection\cite{Bender_1969,Whitten_1969,Huron_1973} the computation of the
 perturbative contribution of a CSF would require the computation of all the
 individual contributions of the determinants included in the CSF, which can
 be large with many open shells.
-In the context of Heat-Bath selection, Holmes \textit{et al} have proposed to
+In the context of heat-bath selection, Holmes \textit{et al} have proposed to
 improve the spin purity of the wave functions by introducing ``time-reversal
 symmetry''\cite{Holmes_2017}, which consists in exchanging the spin labels of
 the electrons.
 However, when the number of open shells is large, time-reversal symmetry is not
-sufficient to generate all possible spin permutations among the open shells.
+sufficient to generate all the required spin permutations among the open shells
+which would generate all the determinants of the corresponding CSF.
 
 Recently, Bytautas and Ruedenberg proposed a simple scheme to truncate large
-spin-pure wave functions while keeping the spin-purity.\cite{Bytautas_2007} The
-coefficients of the determinants with the same \emph{\sop}
+spin-pure wave functions while keeping the spin-purity.\cite{Bytautas_2007}
+By definition, all the determinants belonging to the same CSF have the same
+\emph{spatial occupation pattern} (\sop), so the
+coefficients of the determinants having the same {\sop}
 are summed together to produce the so-called \emph{space-product
 weights}, which are used to truncate the wave function. As spin coupling
 coefficients are included in the CI expansion, the truncated wave function is
@@ -75,11 +84,11 @@ also an eigenfunction of $\stwo$.
 
 Following this idea, imposing spin purity in sCI methods can be done by 
 \begin{enumerate}
-\item identifying all the space occupation patterns of the determinants composing
+\item Identifying all the space occupation patterns of the determinants composing
       the variational space
-\item generating all the determinants (with imposed numbers of $\up$ and
+\item Generating all the determinants (with imposed numbers of $\up$ and
       $\dn$ electrons) corresponding to these space occupation patterns
-\item diagonalizing the Hamiltonian in this expanded determinant space.
+\item Diagonalizing the Hamiltonian in this expanded determinant space.
 \end{enumerate}
 An efficient algorithm to achieve this procedure is presented in this letter,
 and was implemented in the \emph{Quantum Package}.\cite{qp}
@@ -98,7 +107,7 @@ the product of a determinant of
 $\up$ spinorbitals with a determinant of $\dn$ spinorbitals.
 Such a representation can be encoded as a pair of bit strings $(\md_i,\md_j)$.
 Within a bit string,
-each bit corresponds to a spin orbital and the bit is set to one when the
+each bit corresponds to a spinorbital and the bit is set to \one{} when the
 spinorbital is occupied. In low-level languages such as Fortran or C, a bit
 string may be stored as an array of $\Nint$ 64-bit integers, where 
 \begin{equation}
@@ -106,25 +115,10 @@ string may be stored as an array of $\Nint$ 64-bit integers, where
 \end{equation}
 $\Norb$ being the number of molecular orbitals.
 This representation
-allows for efficient determinant comparisons using bitwise operation 
-capabilities of modern processors.\cite{Scemama_2013}
+allows for efficient determinant comparisons using bit-wise operation 
+capabilities of modern processors,\cite{Scemama_2013} and will be convenient
+in the following.
 
-
-%\begin{table}
-%\label{tab:notations}
-%\caption{Notations used in the text.}
-%\begin{tabular}{ll}
-%\hline
-% $\mb[k]$  & $k$-th bit of the bit string $\mb$ \\ 
-% $\vee$    & logical \texttt{or} operator  \\
-% $\wedge$  & logical \texttt{and} operator \\
-% $\oplus$  & logical \texttt{xor} operator \\
-% $\Norb$   & number of molecular orbitals \\
-% $\Nint$   & number of 64-bit integers required to represent \\
-%           & the bit strings: $\Nint = \lfloor \frac{\Norb-1}{64} \rfloor + 1$ \\
-%\hline
-%\end{tabular}
-%\end{table}
 
 \subsection{Identification of the space occupation patterns}
 
@@ -141,7 +135,7 @@ is a vector of integers defined as
 \end{equation}
 If $\mpv_I$ is encoded as a pair of bit strings $(\mpp_I^1, \mpp_I^2)$, where
 $\mpp_I^1$ encodes the singly occupied orbitals and where $\mpp_I^2$ the doubly
-occupied orbitals, it can be computed in $2\times\Nint$ CPU cycles as
+occupied orbitals, the {\sop} can be computed in as
 \begin{align}
   \mpp_I^1 & = \md_i \oplus \md_j \\
   \mpp_I^2 & = \md_i \wedge \md_j 
@@ -149,93 +143,103 @@ occupied orbitals, it can be computed in $2\times\Nint$ CPU cycles as
 where $\oplus$ denotes the \texttt{xor} operator and $\wedge$ denotes the
 \texttt{and} operator.
 
-Transforming all the determinants in a list of unique \sop s can be done
+Transforming all the determinants into a list of unique \sop s can be done
 in linear time, if a hash value is associated with each \sop .\cite{Bitton_1983}
 
 \subsection{Generating all the determinants}
 
-\begin{figure}
-\includegraphics[width=0.9\columnwidth]{mapping}
-\caption{The singly occupied orbitals are mapped contiguously in a bit string,
-and the bit is one when the singly occupied orbital is of $\up$ spin.}
+\begin{figure}[t]
+\includegraphics[width=0.9\columnwidth]{pattern2.tikz}
+\caption{Mapping of the indices of the singly occupied orbitals from the SOP,
+and generation of the common part of all the generated $\up$ and $\dn$ determinants.}
 \label{fig:mapping}
 \end{figure}
 
-
-% Je comprend pas Fig1 Pourquoi y a des orbital doublement occuper dans up et down ? Et pourquoi tu a besoin de up et down?
-
-% Ah oui. Tu as raison! If faut mettre 1 partout. J'ai mis up et down pour qu'on voit pourquoi il y a 1 ou 0 au milieu. Je changerai la figure demain.
+\begin{figure}[t]
+\includegraphics[width=0.8\columnwidth]{mapping.tikz}
+\caption{The singly occupied orbitals are mapped contiguously in a bit string,
+and the bit is \one{} when the singly occupied orbital is of $\up$ spin. $\mpp$ is one of the permutations generated by the algorithm presented in Fig.~\ref{fig:algo}}
+\label{fig:explode}
+\end{figure}
 
 
 For a given {\sop}, one needs to generate all the possible excitations that can
 occur in the singly occupied molecular orbitals, keeping the numbers of $\up$
 and $\dn$ electrons fixed. The generated determinants will only differ by the
-singly occupied orbitals, so one first extracts the list of unoccupied molecular
+singly occupied orbitals, so one first extracts the list $l$ of unoccupied molecular
 orbital indices, and replaces the values in the list by 
-\texttt{1} if the corresponding molecular orbital originates from the $\up$
-determinant, or \texttt{0} if it originates from the $\dn$ determinant. 
+\one if the corresponding molecular orbital originates from the $\up$
+determinant, or \zero{} if it originates from the $\dn$ determinant. 
 This list is encoded in a bit string, and figure~\ref{fig:mapping} illustrates
 this mapping.
 
-To generate all the excitations which keeps the numbers of $\up$ and $\dn$
-electrons constant, we need to build all the bit strings with $n$
-bits set to one and $m$ bits set to zero.
-% Exactement. Ou n c'est le nomber d'electron alpha (ou beta ca change rien) qui etait dans des couche ouverte et  n+m == nonbre de couche ouverte.
-Sean Eron Anderson\cite{NextBit} has proposed a fast algorithm to generate all
-the patterns of $n$ bits set to $1$ in an integer, and it is presented in
-figure~\ref{fig:algo}.
-
-\subsection{Algorithm}
-
-\begin{figure}
+\begin{figure}[t]
 \begin{algorithmic}
 \Function{GenPermutations}{$n,m$}
   \LeftComment{$n$: Number of bits set to 1}
   \LeftComment{$m$: Number of bits set to 0}
+  \LeftComment{$v$, $t$, $t'$, $t''$ and $p$ are encoded in at least $n+m+1$ bits}%
   \State $k \gets 0$
   \State $v \gets (1 \ll n) - 1$
-  \State $w[0] \gets v$
+  \State $p[0] \gets v$
   \While {$v < \left(1 \ll (n+m) \right) $}
     \State $k \gets k+1$
-%    \LeftComment{Set the least significant $0$ bit of $v$ to $1$}
     \State $t \gets v \vee (v-1)$
-%    \LeftComment{Set to $1$ the most significant bit to change}
     \State $t' \gets t + 1$\
-%    \LeftComment{Set to $0$ the least significant bit to change}
-%    \LeftComment{($ctz$ counts the number of trailing zeros)}
-    \State $t'' \gets \left((\neg t \wedge (t+1) )-1 \right) \gg (ctz(v)+1)$
-%    \LeftComment{Add the remaining $1$ bits}
-    \State $w[k] \gets t' \vee t''$
+    \State $t'' \gets \left((\neg t \wedge t')-1 \right) \gg (ctz(v)+1)$
+    \State $p[k] \gets t' \vee t''$
   \EndWhile
-  \State \Return $w$
+  \State \Return $p$
 \EndFunction
 \end{algorithmic}
 \caption{Anderson's algorithm to generate all the patterns of $n$ bits set to
-$1$ in an integer of $n+m$ bits in lexicographical order.
-$i \ll n$ : shifts $i$ $n$ bits to the left, and
-$i \gg n$ : shifts $i$ $n$ bits to the right.}
-
+$1$ in an integer of $n+m$ bits in lexicographic order.
+$ctz$ counts the number of trailing zeros, 
+$i \ll n$~: shifts $i$ $n$ bits to the left, 
+$i \gg n$~: shifts $i$ $n$ bits to the right, 
+$i \gg n$~: shifts $i$ $n$ bits to the right, 
+$\wedge$~: bit-wise \texttt{and} operation, and
+$\vee$~: bit-wise \texttt{or} operation}
 \label{fig:algo}
 \end{figure}
 
-
-
-
+To generate all the excited determinants keeping the numbers of $\up$ and $\dn$
+electrons constant, we need to build all the bit strings with $n_\up$
+bits set to \one{} and $n_\dn$ bits set to \zero{}.
+Anderson has proposed a fast algorithm to generate all
+the patterns of $n_\up$ bits set to $1$ in a bit string of length $n_\up+n_\dn$
+in lexicographical order.\cite{NextBit}
+The bit string $\tv$ is initialized with the smallest possible unsigned integer containing
+$n_\up$ bits set to \one, which is $2^{n_\up+1}-1$. Then, the
+following steps are iterated until $\tv$ becomes greater than $2^{n_\up+n_\dn}-1$:
 \begin{enumerate}
-    \item Generate a determinant where all the bit corresponding to the doubly occupied orbitals is set to one, and zeros otherwise. It correspond to a pattern of determinant \label{det:pattern}
-    \item Create a sparse representation of the singly occupied orbital.\label{det:sparce}     %2011120 -> [3,4,5]
-    \item Generate the permutations of $N_{alpha}$-singly occupied-orbitals into $N$ singly-occupied-orbital. 
-    \item For each permutation:
-        \begin{enumerate}
-            \item Initialize a alpha and beta determinant corresponding to the pattern defined in \ref{det:pattern}
-            \item For each bit in the permutation
-            \begin{enumerate}
-                \item Find the corresponding position of this bit in the alpha or beta determinant using the dictionary created in \ref{det:sparce}.
-                \item If the permutation bit is set to one, set the correspond bit of the \textbf{alpha}-determinant to one
-                \item  If the permutation bit is set to zero, set the correspond bit of the \textbf{beta}-determinant to one
-            \end{enumerate}
-        \end{enumerate}
+    \item Set all the least significant \zero{} bits of $\tv$ to \one{}
+    \item Add one to the result. The least significant \one{} marks the position of the \zero{} that should be changed into a \one{}
+    \item Add the remaining \one{} bits if necessary
 \end{enumerate}
+The corresponding pseudo-code is presented in Fig.~\ref{fig:algo}.
+
+
+
+%\subsection{Algorithm}
+
+
+
+%\begin{enumerate}
+%    \item Generate a determinant where all the bit corresponding to the doubly occupied orbitals is set to \one, and zeros otherwise. It correspond to a pattern of determinant \label{det:pattern}
+%    \item Create a sparse representation of the singly occupied orbital.\label{det:sparce}     %2011120 -> [3,4,5]
+%    \item Generate the permutations of $N_{alpha}$-singly occupied-orbitals into $N$ singly-occupied-orbital. 
+%    \item For each permutation:
+%        \begin{enumerate}
+%            \item Initialize a alpha and beta determinant corresponding to the pattern defined in \ref{det:pattern}
+%            \item For each bit in the permutation
+%            \begin{enumerate}
+%                \item Find the corresponding position of this bit in the alpha or beta determinant using the dictionary created in \ref{det:sparce}.
+%                \item If the permutation bit is set to one, set the correspond bit of the \textbf{alpha}-determinant to one
+%                \item  If the permutation bit is set to \zero{}, set the correspond bit of the \textbf{beta}-determinant to one
+%            \end{enumerate}
+%        \end{enumerate}
+%\end{enumerate}
 
 
 
