@@ -185,28 +185,32 @@ BEGIN_PROVIDER [ integer(bit_kind), gen_dets, (n_int,2,n_det) ]
 
  do i=1,n_det
 
-   tmp_det(:) = 0
+   ! Initialize gen_dets with occ(:,2)
+   do k=1,n_int
+      tmp_det(k) = occ(k,2)
+      tmp_det(k+n_int_shift) = occ(k,2)
+   enddo
 
    do k=1,n_single_orbital
-      idx = single_index(k)
+      idx = single_index(k)-1
 
       ! Shift integer if the bit is zero
       iint = 1 + n_int_shift - iand(ishft(v,n_int_shift_bit+1-k),n_int_shift) 
 
       ! Find integer
-      iint = iint + ishft(idx-1,-log_size_orbital_bucket) 
+      iint = iint + ishft(idx,-log_size_orbital_bucket) 
 
       ! Find position in integer
-      ipos = idx-ishft((iint-1),log_size_orbital_bucket)-1
+      ipos = idx-ishft((iint-1),log_size_orbital_bucket)
 
       ! Set the bit in the temporary determinant
       tmp_det(iint) = ibset( tmp_det(iint), ipos )
    enddo
 
-   ! Copy in gen_dets, adding also the doubly occupied mos
+   ! Copy in gen_dets
    do k=1,n_int
-      gen_dets(k,1,i) = ior(occ(k,2), tmp_det(k))
-      gen_dets(k,2,i) = ior(occ(k,2), tmp_det(k+n_int_shift))
+      gen_dets(k,1,i) = tmp_det(k)
+      gen_dets(k,2,i) = tmp_det(k+n_int_shift)
    enddo
 
    ! Generate next permutation
