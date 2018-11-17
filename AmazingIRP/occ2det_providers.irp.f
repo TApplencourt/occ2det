@@ -190,14 +190,14 @@ BEGIN_PROVIDER [ integer(bit_kind), gen_dets, (n_int,2,n_det) ]
    do k=1,n_single_orbital
       idx = single_index(k)
 
+      ! Shift integer if the bit is zero
+      iint = 1 + n_int_shift - iand(ishft(v,n_int_shift_bit+1-k),n_int_shift) 
+
       ! Find integer
-      iint = ishft(idx-1,-log_size_orbital_bucket) + 1
+      iint = iint + ishft(idx-1,-log_size_orbital_bucket) 
 
       ! Find position in integer
       ipos = idx-ishft((iint-1),log_size_orbital_bucket)-1
-
-      ! Shift integer if the bit is zero
-      iint = iint + n_int_shift - iand(ishft(v,n_int_shift_bit+1-k),n_int_shift) 
 
       ! Set the bit in the temporary determinant
       tmp_det(iint) = ibset( tmp_det(iint), ipos )

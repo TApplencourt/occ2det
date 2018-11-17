@@ -16,11 +16,15 @@ irpf90.make: $(filter-out IRPF90_temp/%, $(wildcard */*.irp.f)) $(wildcard *.irp
 	$(IRPF90)
 
 
-run: occ2det codelet_single_index
+run: occ2det 
 	./occ2det 0 36 15 1 1 2 2 1 1 1 1 1 1 1 0 2 1 0 1 2 1 1 1 0 2 1 1 2 1 1 2 1 1 1 1 2 1 0 1
 
-bench: codelet_single_index
+bench_single: codelet_single_index
 	./codelet_single_index 0 36 15 1 1 2 2 1 1 1 1 1 1 1 0 2 1 0 1 2 1 1 1 0 2 1 1 2 1 1 2 1 1 1 1 2 1 0 1
 
-bench2: codelet_gen_dets
+bench: codelet_gen_dets check
 	./codelet_gen_dets 0 36 15 1 1 2 2 1 1 1 1 1 1 1 0 2 1 0 1 2 1 1 1 0 2 1 1 2 1 1 2 1 1 1 1 2 1 0 1
+
+check: occ2det
+	./occ2det 1 36 15 1 1 2 2 1 1 1 1 1 1 1 0 2 1 0 1 2 1 1 1 0 2 1 1 2 1 1 2 1 1 1 1 2 1 0 1 | head -100 > out
+	diff out REF
