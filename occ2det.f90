@@ -150,11 +150,11 @@ program hello
     ENDDO
 
     call cpu_time(t0)
-    do i=1,1000
+    do i=1,10
       call gen_permutation(n_orbital, n_int, log_size_orbital_bucket, occ, n_alpha)
     enddo
     call cpu_time(t1)
-    print *,  'CPU:', (t1-t0)/1000.d0
+    print *,  'CPU:', (t1-t0)/10.d0
 
     print*, 'n_det:', n_det
 
@@ -166,11 +166,11 @@ program hello
  
     DO D=d_init,n_det
         DO I=1, n_int
-             write(*, '(B32)') l_det_alpha(I,D)
+             write(*, '(B32.32)') l_det_alpha(I,D)
         ENDDO
 
         DO I=1, n_int
-             write(*, '(B32)') l_det_beta(I,D)
+             write(*, '(B32.32)') l_det_beta(I,D)
         ENDDO
 
     ENDDO 
