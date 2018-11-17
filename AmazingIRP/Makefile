@@ -1,7 +1,6 @@
-IRPF90 = irpf90 --codelet single_index:100000000 #-a -d
+IRPF90 = irpf90 --codelet single_index:100000000 --codelet gen_dets:100 #-a -d
 FC     = ifort 
-FCFLAGS= -O2 -xHost -I .
-FCFLAGS= -O2 -xHost -C -traceback -I .
+FCFLAGS= -O3 -g -xHost -I .
 NINJA  = ninja
 AR     = ar
 RANLIB = ranlib
@@ -22,3 +21,6 @@ run: occ2det codelet_single_index
 
 bench: codelet_single_index
 	./codelet_single_index 0 36 15 1 1 2 2 1 1 1 1 1 1 1 0 2 1 0 1 2 1 1 1 0 2 1 1 2 1 1 2 1 1 1 1 2 1 0 1
+
+bench2: codelet_gen_dets
+	./codelet_gen_dets 0 36 15 1 1 2 2 1 1 1 1 1 1 1 0 2 1 0 1 2 1 1 1 0 2 1 1 2 1 1 2 1 1 1 1 2 1 0 1

@@ -136,6 +136,20 @@ BEGIN_PROVIDER [ integer, single_index, (n_single_orbital) ]
 END_PROVIDER
 
 
+BEGIN_PROVIDER [ integer, n_alpha_in_single ]
+ implicit none
+ BEGIN_DOC
+ ! Number of alpha electrons in open shells
+ END_DOC
+ n_alpha_in_single = n_alpha
+ integer :: i
+ do i=1,n_orbital
+   if (occ_int(i) == 2) then
+     n_alpha_in_single -= 1
+   endif
+ enddo
+END_PROVIDER
+
 
 BEGIN_PROVIDER [ integer, n_det ]
  implicit none
@@ -143,7 +157,7 @@ BEGIN_PROVIDER [ integer, n_det ]
  ! Number of generated determinants
  END_DOC
  integer*8, external :: n_combinations
- n_det = n_combinations(n_orbital,n_alpha)
+ n_det = n_combinations(n_single_orbital,n_alpha_in_single)
 END_PROVIDER
 
 
@@ -165,14 +179,14 @@ BEGIN_PROVIDER [ integer(bit_kind), gen_dets, (n_int,2,n_det) ]
    gen_dets(:,2,i) = occ(:,2)
  enddo
 
- v = ishft(1,n_alpha) - 1
+ v = ishft(1,n_alpha_in_single) - 1
 
  do i=1,n_det
    do k=1,n_single_orbital
       idx = single_index(k)
       iint = ishft(idx-1,-log_size_orbital_bucket) + 1
       ipos = idx-ishft((iint-1),log_size_orbital_bucket)-1
-      ispin = addr ( iand(ishft(v,k),1) )
+      ispin = addr ( iand(ishft(v,1-k),1) )
       gen_dets(iint,ispin,i) = ibset( gen_dets(iint,ispin,i), ipos)
    enddo
    t = ior(v,v-1)
