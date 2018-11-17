@@ -170,32 +170,46 @@ BEGIN_PROVIDER [ integer(bit_kind), gen_dets, (n_int,2,n_det) ]
  integer                        :: ipos, iint
  
  integer(bit_kind)              :: v,t,tt
- integer                        :: idx, ispin
- integer, parameter             :: addr(0:1) = (/ 2, 1 /)
+ integer                        :: idx
 
  integer(bit_kind)              :: tmp_det(4*n_int)
  integer(bit_kind)              :: n_int_shift
  integer                        :: n_int_shift_bit
 
- n_int_shift_bit = size_orbital_bucket - leadz(n_int)
+ n_int_shift_bit = size_orbital_bucket - leadz(n_int) 
+
+ ! Shift in n_int to go to beta spin part.
  n_int_shift = ibset(0, n_int_shift_bit)
 
  v = ishft(1,n_alpha_in_single) - 1
 
  do i=1,n_det
+
    tmp_det(:) = 0
+
    do k=1,n_single_orbital
       idx = single_index(k)
+
+      ! Find integer
       iint = ishft(idx-1,-log_size_orbital_bucket) + 1
+
+      ! Find position in integer
       ipos = idx-ishft((iint-1),log_size_orbital_bucket)-1
-      ispin = addr ( iand(ishft(v,1-k),1) )
-      iint = iint + n_int_shift - iand(ishft(v,1+n_int_shift_bit-k),n_int_shift) 
+
+      ! Shift integer if the bit is zero
+      iint = iint + n_int_shift - iand(ishft(v,n_int_shift_bit+1-k),n_int_shift) 
+
+      ! Set the bit in the temporary determinant
       tmp_det(iint) = ibset( tmp_det(iint), ipos )
    enddo
+
+   ! Copy in gen_dets, adding also the doubly occupied mos
    do k=1,n_int
       gen_dets(k,1,i) = ior(occ(k,2), tmp_det(k))
       gen_dets(k,2,i) = ior(occ(k,2), tmp_det(k+n_int_shift))
    enddo
+
+   ! Generate next permutation
    t = ior(v,v-1)
    tt = t+1
    v = ior(tt, ishft( iand(not(t),tt) - 1, -trailz(v)-1) )
