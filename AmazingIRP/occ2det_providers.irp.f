@@ -172,9 +172,11 @@ BEGIN_PROVIDER [ integer(bit_kind), gen_dets, (n_int,2,n_det) ]
  integer(bit_kind)              :: v,t,tt
  integer                        :: idx
  integer                        :: ispin
+ integer                        :: single_index_local(n_single_orbital)
 
+ single_index_local(:) = single_index(:)-1
 
- v = ishft(1,n_alpha_in_single) - 1
+ v = shiftl(1,n_alpha_in_single) - 1
 
  do i=1,n_det
 
@@ -183,15 +185,15 @@ BEGIN_PROVIDER [ integer(bit_kind), gen_dets, (n_int,2,n_det) ]
    gen_dets(:,2,i) = occ(:,2)
 
    do k=1,n_single_orbital
-      idx = single_index(k)-1
+      idx = single_index_local(k)
 
-      ispin = 2 - iand(ishft(v,1-k),1) 
+      ispin = 2 - iand(shiftr(v,k-1),1) 
 
       ! Find integer
-      iint = 1 + ishft(idx,-log_size_orbital_bucket) 
+      iint = 1 + shiftr(idx,log_size_orbital_bucket) 
 
       ! Find position in integer
-      ipos = idx-ishft((iint-1),log_size_orbital_bucket)
+      ipos = idx-shiftl((iint-1),log_size_orbital_bucket)
 
       ! Set the bit in the temporary determinant
       gen_dets(iint,ispin,i) = ibset( gen_dets(iint,ispin,i), ipos )
@@ -200,7 +202,7 @@ BEGIN_PROVIDER [ integer(bit_kind), gen_dets, (n_int,2,n_det) ]
    ! Generate next permutation
    t = ior(v,v-1)
    tt = t+1
-   v = ior(tt, ishft( iand(not(t),tt) - 1, -trailz(v)-1) )
+   v = ior(tt, shiftr( and(not(t),tt) - 1, trailz(v)+1) )
  enddo
 
 END_PROVIDER
