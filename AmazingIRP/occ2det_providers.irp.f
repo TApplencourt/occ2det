@@ -84,8 +84,8 @@ BEGIN_PROVIDER [ integer(bit_kind), occ, (n_int,2) ]
  occ = 0
  do i=1,n_orbital
    if (occ_int(i) == 0) cycle
-   iint = ishft(i-1,-log_size_orbital_bucket) + 1
-   ipos = i-ishft((iint-1),log_size_orbital_bucket)-1
+   iint = shiftr(i-1,log_size_orbital_bucket) + 1
+   ipos = i-shiftl((iint-1),log_size_orbital_bucket)-1
    if (occ_int(i) == 1) then
      occ(iint,1) = ibset( occ(iint,1), ipos )
    else if (occ_int(i) == 2) then

@@ -1,6 +1,6 @@
 IRPF90 = irpf90 --codelet single_index:100000000 --codelet gen_dets:500 #-a -d
 FC     = ifort 
-FCFLAGS= -O3 -g -xHost -I .
+FCFLAGS= -O2 -g -xHost -I .
 NINJA  = ninja
 AR     = ar
 RANLIB = ranlib
