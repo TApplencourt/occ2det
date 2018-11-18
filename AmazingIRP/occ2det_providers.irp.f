@@ -171,46 +171,30 @@ BEGIN_PROVIDER [ integer(bit_kind), gen_dets, (n_int,2,n_det) ]
  
  integer(bit_kind)              :: v,t,tt
  integer                        :: idx
+ integer                        :: ispin
 
- integer(bit_kind)              :: tmp_det(4*n_int)
- integer(bit_kind)              :: n_int_shift
- integer                        :: n_int_shift_bit
-
- n_int_shift_bit = size_orbital_bucket - leadz(n_int) 
-
- ! Shift in n_int to go to beta spin part.
- n_int_shift = ibset(0, n_int_shift_bit)
 
  v = ishft(1,n_alpha_in_single) - 1
 
  do i=1,n_det
 
    ! Initialize gen_dets with occ(:,2)
-   do k=1,n_int
-      tmp_det(k) = occ(k,2)
-      tmp_det(k+n_int_shift) = occ(k,2)
-   enddo
+   gen_dets(:,1,i) = occ(:,2)
+   gen_dets(:,2,i) = occ(:,2)
 
    do k=1,n_single_orbital
       idx = single_index(k)-1
 
-      ! Shift integer if the bit is zero
-      iint = 1 + n_int_shift - iand(ishft(v,n_int_shift_bit+1-k),n_int_shift) 
+      ispin = 2 - iand(ishft(v,1-k),1) 
 
       ! Find integer
-      iint = iint + ishft(idx,-log_size_orbital_bucket) 
+      iint = 1 + ishft(idx,-log_size_orbital_bucket) 
 
       ! Find position in integer
       ipos = idx-ishft((iint-1),log_size_orbital_bucket)
 
       ! Set the bit in the temporary determinant
-      tmp_det(iint) = ibset( tmp_det(iint), ipos )
-   enddo
-
-   ! Copy in gen_dets
-   do k=1,n_int
-      gen_dets(k,1,i) = tmp_det(k)
-      gen_dets(k,2,i) = tmp_det(k+n_int_shift)
+      gen_dets(iint,ispin,i) = ibset( gen_dets(iint,ispin,i), ipos )
    enddo
 
    ! Generate next permutation
