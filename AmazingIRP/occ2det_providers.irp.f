@@ -193,8 +193,13 @@ BEGIN_PROVIDER [ integer(bit_kind), gen_dets, (n_int,2,n_det) ]
    gen_dets(:,2,i) = occ(:,2)
 
    do k=1,n_single_orbital
+      ! Get spin : 1 if alpha, 0 if beta
+      if (btest(v,k-1)) then 
+         ispin = 1
+      else
+         ispin = 2
+      endif
       idx = single_index_local(k)
-      ispin = 2 - iand(shiftr(v,k-1),1) 
       ! Set the bit in the temporary determinant
       gen_dets(iint(k),ispin,i) = ibset( gen_dets(iint(k),ispin,i), ipos(k) )
    enddo
