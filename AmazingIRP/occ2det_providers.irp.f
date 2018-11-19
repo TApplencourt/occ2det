@@ -172,19 +172,17 @@ BEGIN_PROVIDER [ integer(bit_kind), gen_dets, (n_int,2,n_det) ]
  integer(bit_kind)              :: v,t,tt
  integer                        :: idx
  integer                        :: ispin
- integer                        :: single_index_local(n_single_orbital)
 
- single_index_local(:) = single_index(:)-1
-
- v = shiftl(1,n_alpha_in_single) - 1
-
+ ! Compute once the iint and ipos for each singly occupied MO
  do k=1,n_single_orbital
-   idx = single_index_local(k)
+   idx = single_index(k)-1
    ! Find integer
    iint(k) = 1 + shiftr(idx,log_size_orbital_bucket) 
    ! Find position in integer
    ipos(k) = idx-shiftl((iint(k)-1),log_size_orbital_bucket)
  enddo
+
+ v = shiftl(1,n_alpha_in_single) - 1
 
  do i=1,n_det
 
@@ -199,8 +197,7 @@ BEGIN_PROVIDER [ integer(bit_kind), gen_dets, (n_int,2,n_det) ]
       else
          ispin = 2
       endif
-      idx = single_index_local(k)
-      ! Set the bit in the temporary determinant
+      ! Set the bit in the determinant
       gen_dets(iint(k),ispin,i) = ibset( gen_dets(iint(k),ispin,i), ipos(k) )
    enddo
 
