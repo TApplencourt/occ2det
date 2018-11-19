@@ -167,7 +167,7 @@ BEGIN_PROVIDER [ integer(bit_kind), gen_dets, (n_int,2,n_det) ]
  ! Generated determinants
  END_DOC
  integer                        :: i, k
- integer                        :: ipos, iint
+ integer                        :: ipos(n_single_orbital), iint(n_single_orbital)
  
  integer(bit_kind)              :: v,t,tt
  integer                        :: idx
@@ -178,6 +178,14 @@ BEGIN_PROVIDER [ integer(bit_kind), gen_dets, (n_int,2,n_det) ]
 
  v = shiftl(1,n_alpha_in_single) - 1
 
+ do k=1,n_single_orbital
+   idx = single_index_local(k)
+   ! Find integer
+   iint(k) = 1 + shiftr(idx,log_size_orbital_bucket) 
+   ! Find position in integer
+   ipos(k) = idx-shiftl((iint(k)-1),log_size_orbital_bucket)
+ enddo
+
  do i=1,n_det
 
    ! Initialize gen_dets with occ(:,2)
@@ -186,17 +194,9 @@ BEGIN_PROVIDER [ integer(bit_kind), gen_dets, (n_int,2,n_det) ]
 
    do k=1,n_single_orbital
       idx = single_index_local(k)
-
       ispin = 2 - iand(shiftr(v,k-1),1) 
-
-      ! Find integer
-      iint = 1 + shiftr(idx,log_size_orbital_bucket) 
-
-      ! Find position in integer
-      ipos = idx-shiftl((iint-1),log_size_orbital_bucket)
-
       ! Set the bit in the temporary determinant
-      gen_dets(iint,ispin,i) = ibset( gen_dets(iint,ispin,i), ipos )
+      gen_dets(iint(k),ispin,i) = ibset( gen_dets(iint(k),ispin,i), ipos(k) )
    enddo
 
    ! Generate next permutation
