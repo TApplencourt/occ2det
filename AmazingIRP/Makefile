@@ -1,6 +1,8 @@
-IRPF90 = irpf90 --codelet single_index:100000000 --codelet gen_dets:500 #-a -d
+IRPF90 = irpf90 --codelet single_index:100000000 --codelet gen_dets:500 --codelet bench_v:5000 #-a -d
 FC     = gfortran
 FCFLAGS= -O2 -g -march=native -ffree-line-length-none -I .
+#FC     = ifort
+#FCFLAGS= -O2 -g -xHost -I .
 NINJA  = ninja
 AR     = ar
 RANLIB = ranlib
@@ -28,3 +30,7 @@ bench: codelet_gen_dets check
 check: occ2det
 	./occ2det 1 36 15 1 1 2 2 1 1 1 1 1 1 1 0 2 1 0 1 2 1 1 1 0 2 1 1 2 1 1 2 1 1 1 1 2 1 0 1 | head -100 > out
 	diff out REF
+
+bench_v: codelet_bench_v
+	./codelet_bench_v 0 36 15 1 1 2 2 1 1 1 1 1 1 1 0 2 1 0 1 2 1 1 1 0 2 1 1 2 1 1 2 1 1 1 1 2 1 0 1
+

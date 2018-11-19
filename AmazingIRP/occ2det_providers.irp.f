@@ -210,6 +210,25 @@ BEGIN_PROVIDER [ integer(bit_kind), gen_dets, (n_int,2,n_det) ]
 END_PROVIDER
 
 
+BEGIN_PROVIDER [ integer(bit_kind), bench_v ]
+ implicit none
+ BEGIN_DOC
+ ! Generated determinants
+ END_DOC
+ integer                        :: i
+ integer(bit_kind)              :: v,t,tt
+
+ v = shiftl(1,n_alpha_in_single) - 1
+ do i=1,n_det
+   t = ior(v,v-1)
+   tt = t+1
+   v = ior(tt, shiftr( and(not(t),tt) - 1, trailz(v)+1) )
+ enddo
+ bench_v = v
+
+END_PROVIDER
+
+
 
 
 
