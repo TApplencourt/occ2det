@@ -55,10 +55,7 @@ SUBROUTINE gen_permutation(n_orbital, n_int, log_size_orbital_bucket, occ, n_alp
                 n_single_orbital = n_single_orbital + 1
                 occ_if(n_single_orbital) = idx
             CASE (2)
-!                det_i = idx / size_orbital_bucket + 1
                 det_i = rshift(idx, log_size_orbital_bucket) + 1
-
-!                det_p = MOD(idx,size_orbital_bucket)
                 det_p = and(idx,size_orbital_bucket-1)
 
                 det_pattern(det_i) = ibset(det_pattern(det_i),det_p)
@@ -87,11 +84,8 @@ SUBROUTINE gen_permutation(n_orbital, n_int, log_size_orbital_bucket, occ, n_alp
     
         DO i=1,n_single_orbital
             idx = occ_if(i) 
-!            det_i = idx / size_orbital_bucket + 1
             det_i = rshift(idx, log_size_orbital_bucket) + 1
-
-!            det_p = MOD(idx, size_orbital_bucket)
-                det_p = and(idx,size_orbital_bucket-1)
+            det_p = and(idx,size_orbital_bucket-1)
 
             IF (btest(p,i-1)) THEN
                 l_det_alpha(det_i,idx_d) = ibset(l_det_alpha(det_i,idx_d), det_p)
@@ -149,13 +143,9 @@ program hello
         read(buffer, '(I1)') occ(i)
     ENDDO
 
-    call cpu_time(t0)
     do i=1,100
       call gen_permutation(n_orbital, n_int, log_size_orbital_bucket, occ, n_alpha)
     enddo
-    call cpu_time(t1)
-    print *,  'CPU:', (t1-t0)/100.d0
-
     print*, 'n_det:', n_det
 
     IF (mode.EQ.0) THEN

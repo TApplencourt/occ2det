@@ -39,7 +39,7 @@ unsigned long n_combinaison(unsigned n, unsigned k) {
      return r;
 }
 
-void gen_permutation(unsigned const n_orbital, unsigned const n_int, unsigned const size_orbital_bucket, 
+void gen_permutation(unsigned const n_orbital, unsigned const n_int, unsigned const log_size_orbital_bucket, 
                     unsigned const * const occ, unsigned const n_alpha, 
                     unsigned long * const n_det, unsigned **l_det_alpha, unsigned **l_det_beta)
 {
@@ -67,8 +67,8 @@ void gen_permutation(unsigned const n_orbital, unsigned const n_int, unsigned co
             }
             case 2 :
             {
-                unsigned const det_i = idx / size_orbital_bucket;
-                unsigned const det_p = idx % size_orbital_bucket;
+                unsigned const det_i =  (idx >> log_size_orbital_bucket);
+                unsigned const det_p = idx - ( (det_i  -1) << log_size_orbital_bucket); 
 
                 det_patern[det_i] |= 1 << det_p; // set bit to one
                 n_alpha_f -= 1;
@@ -108,8 +108,8 @@ void gen_permutation(unsigned const n_orbital, unsigned const n_int, unsigned co
             unsigned * const det = (o==1) ? alpha: beta; //Determinant are zero-ed .Modify only if need to set the bit to 1
 
             idx = occ_if[i];
-            unsigned const det_i = idx / size_orbital_bucket;
-            unsigned const det_p = idx % size_orbital_bucket;
+            unsigned const det_i =  (idx >> log_size_orbital_bucket);
+            unsigned const det_p = idx - ( (det_i  -1) << log_size_orbital_bucket); 
 
             det[det_i]  |= 1 << det_p ; //Set the bit to one
         }
@@ -125,7 +125,7 @@ void gen_permutation(unsigned const n_orbital, unsigned const n_int, unsigned co
 int main(int argc, char **argv)
 {
     const unsigned size_orbital_bucket = sizeof(unsigned)*8;
-
+    const unsigned log_size_orbital_bucket = __builtin_ctz(size_orbital_bucket);
     const unsigned mode = atoi(argv[1]); 
     const unsigned n_orbital = atoi(argv[2]);;
     const unsigned n_alpha =  atoi(argv[3]);
@@ -144,7 +144,7 @@ int main(int argc, char **argv)
     unsigned *l_det_alpha;
     unsigned *l_det_beta;
 
-    gen_permutation(n_orbital, n_int, size_orbital_bucket, occ, n_alpha, &n_det, &l_det_alpha,  &l_det_beta);
+    gen_permutation(n_orbital, n_int, log_size_orbital_bucket, occ, n_alpha, &n_det, &l_det_alpha,  &l_det_beta);
 
     printf("n_det: %lu\n", n_det);
   
