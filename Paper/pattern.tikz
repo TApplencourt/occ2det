@@ -68,8 +68,8 @@
 		\node at (\x+0.2,-3.2+\YY) { \scriptsize \texttt{\x} };
 	}
 
-    % p
-   \node at (-0.5,0+\YY) { $\mathtt{p}$ };
+    % v
+   \node at (-0.5,0+\YY) { $\mathtt{v}$ };
 	\foreach \x in {0,...,3} {
 	 	\draw[fill=yellow!20!white] (\x,-0.5+\YY) rectangle (\x+1,0.5+\YY) ;	
 		\node at (\x+0.2,-0.7+\YY) { \scriptsize \texttt{\x} };
