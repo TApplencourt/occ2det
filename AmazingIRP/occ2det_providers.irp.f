@@ -161,7 +161,7 @@ BEGIN_PROVIDER [ integer, n_det ]
 END_PROVIDER
 
 
-BEGIN_PROVIDER [ integer(bit_kind), gen_dets (n_int,2,n_det) ]
+BEGIN_PROVIDER [ integer(bit_kind), gen_dets, (n_int,2,n_det) ]
  implicit none
  BEGIN_DOC
  ! Generated determinants

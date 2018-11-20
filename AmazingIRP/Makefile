@@ -1,4 +1,4 @@
-IRPF90 = ~/irpf90/bin/irpf90 --codelet single_index:100000000 --codelet gen_dets:500 --codelet bench_v:5000 #-a -d
+IRPF90 = irpf90 --codelet single_index:100000000 --codelet gen_dets:500 --codelet bench_v:5000 #-a -d
 FC     = gfortran
 FCFLAGS= -O2 -g -march=native -ffree-line-length-none -I .
 #FC     = ifort
