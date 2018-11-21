@@ -1,4 +1,4 @@
-integer, parameter :: bit_kind = 8
+integer, parameter :: bit_kind = 4
 
 
 BEGIN_PROVIDER [ integer, mode ]
@@ -169,7 +169,7 @@ BEGIN_PROVIDER [ integer(bit_kind), gen_dets, (n_int,2,n_det) ]
  integer                        :: i, k
  integer                        :: ipos(n_single_orbital), iint(n_single_orbital)
  
- integer(bit_kind)              :: v,t,tt
+ integer(bit_kind)              :: v,t,tt,v_prev,diff
  integer                        :: idx
  integer                        :: ispin, ispin2
 
@@ -182,62 +182,102 @@ BEGIN_PROVIDER [ integer(bit_kind), gen_dets, (n_int,2,n_det) ]
    ipos(k) = idx-shiftl((iint(k)-1),log_size_orbital_bucket)
  enddo
 
+ v_prev = 0_bit_kind
  v = shiftl(1,n_alpha_in_single) - 1
 
  if (shiftl(n_alpha_in_single,1) == n_single_orbital) then
 
-  do i=1,n_det,2
+    ! Initialize first determinant
+    gen_dets(:,1,1) = occ(:,2)
+    gen_dets(:,2,1) = occ(:,2)
 
-    ! Initialize gen_dets with occ(:,2)
-    gen_dets(:,1,i) = occ(:,2)
-    gen_dets(:,2,i) = occ(:,2)
-
-    do k=1,n_single_orbital
-        ! Get spin : 1 if alpha, 0 if beta
-        if (btest(v,k-1)) then 
-          ispin  = 1
-        else
-          ispin  = 2
-        endif
-        ! Set the bit in the determinant
-        gen_dets(iint(k),ispin,i) = ibset( gen_dets(iint(k),ispin,i), ipos(k) )
+    do k=1,n_alpha_in_single
+        gen_dets(iint(k),1,1) = ibset( gen_dets(iint(k),1,1), ipos(k) )
     enddo
 
-    ! Generate next permutation
-    t = ior(v,v-1)
-    tt = t+1
-    v = ior(tt, shiftr( and(not(t),tt) - 1, trailz(v)+1) )
+    do k=n_alpha_in_single+1,n_single_orbital
+        gen_dets(iint(k),2,1) = ibset( gen_dets(iint(k),2,1), ipos(k) )
+    enddo
 
     ! Time reversal symmetry
-    gen_dets(:,1,i+1) = gen_dets(:,2,i)
-    gen_dets(:,2,i+1) = gen_dets(:,1,i)
+    gen_dets(:,1,2) = gen_dets(:,2,1)
+    gen_dets(:,2,2) = gen_dets(:,1,1)
 
-  enddo
+    do i=3,n_det,2
+
+      ! Generate next permutation
+      v_prev = v
+      t = ior(v,v-1)
+      tt = t+1
+      v = ior(tt, shiftr( and(not(t),tt) - 1, trailz(v)+1) )
+
+      ! Find what has changed between v_prev and v
+      diff = ieor(v,v_prev)
+
+      gen_dets(:,1,i) = gen_dets(:,1,i-2)
+      gen_dets(:,2,i) = gen_dets(:,2,i-2)
+
+      ! Swap bits only where they have changed from v_prev to v
+      do while (diff /= 0_bit_kind)
+        k = trailz(diff)+1
+        if (btest(v,k-1)) then 
+          gen_dets(iint(k),1,i) = ibset( gen_dets(iint(k),1,i), ipos(k) )
+          gen_dets(iint(k),2,i) = ibclr( gen_dets(iint(k),2,i), ipos(k) )
+        else
+          gen_dets(iint(k),1,i) = ibclr( gen_dets(iint(k),1,i), ipos(k) )
+          gen_dets(iint(k),2,i) = ibset( gen_dets(iint(k),2,i), ipos(k) )
+        endif
+        diff = iand(diff,diff-1)
+      enddo
+
+      ! Time reversal symmetry
+      gen_dets(:,1,i+1) = gen_dets(:,2,i)
+      gen_dets(:,2,i+1) = gen_dets(:,1,i)
+
+    enddo
 
  else
 
-  do i=1,n_det
+    ! Initialize first determinant
+    gen_dets(:,1,1) = occ(:,2)
+    gen_dets(:,2,1) = occ(:,2)
 
-    ! Initialize gen_dets with occ(:,2)
-    gen_dets(:,1,i) = occ(:,2)
-    gen_dets(:,2,i) = occ(:,2)
-
-    do k=1,n_single_orbital
-        ! Get spin : 1 if alpha, 0 if beta
-        if (btest(v,k-1)) then 
-          ispin = 1
-        else
-          ispin = 2
-        endif
-        ! Set the bit in the determinant
-        gen_dets(iint(k),ispin,i) = ibset( gen_dets(iint(k),ispin,i), ipos(k) )
+    do k=1,n_alpha_in_single
+        gen_dets(iint(k),1,1) = ibset( gen_dets(iint(k),1,1), ipos(k) )
     enddo
 
-    ! Generate next permutation
-    t = ior(v,v-1)
-    tt = t+1
-    v = ior(tt, shiftr( and(not(t),tt) - 1, trailz(v)+1) )
-  enddo
+    do k=n_alpha_in_single+1,n_single_orbital
+        gen_dets(iint(k),2,1) = ibset( gen_dets(iint(k),2,1), ipos(k) )
+    enddo
+
+    do i=2,n_det
+
+      ! Generate next permutation
+      v_prev = v
+      t = ior(v,v-1)
+      tt = t+1
+      v = ior(tt, shiftr( and(not(t),tt) - 1, trailz(v)+1) )
+
+      ! Find what has changed between v_prev and v
+      diff = ieor(v,v_prev)
+
+      gen_dets(:,1,i) = gen_dets(:,1,i-1)
+      gen_dets(:,2,i) = gen_dets(:,2,i-1)
+
+      ! Swap bits only where they have changed from v_prev to v
+      do while (diff /= 0_bit_kind)
+        k = trailz(diff)+1
+        if (btest(v,k-1)) then 
+          gen_dets(iint(k),1,i) = ibset( gen_dets(iint(k),1,i), ipos(k) )
+          gen_dets(iint(k),2,i) = ibclr( gen_dets(iint(k),2,i), ipos(k) )
+        else
+          gen_dets(iint(k),1,i) = ibclr( gen_dets(iint(k),1,i), ipos(k) )
+          gen_dets(iint(k),2,i) = ibset( gen_dets(iint(k),2,i), ipos(k) )
+        endif
+        diff = iand(diff,diff-1)
+      enddo
+
+    enddo
 
  endif
 
