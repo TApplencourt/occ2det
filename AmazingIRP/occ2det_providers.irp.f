@@ -1,4 +1,4 @@
-integer, parameter :: bit_kind = 4
+integer, parameter :: bit_kind = 8
 
 
 BEGIN_PROVIDER [ integer, mode ]
@@ -171,7 +171,7 @@ BEGIN_PROVIDER [ integer(bit_kind), gen_dets, (n_int,2,n_det) ]
  
  integer(bit_kind)              :: v,t,tt
  integer                        :: idx
- integer                        :: ispin
+ integer                        :: ispin, ispin2
 
  ! Compute once the iint and ipos for each singly occupied MO
  do k=1,n_single_orbital
@@ -184,28 +184,62 @@ BEGIN_PROVIDER [ integer(bit_kind), gen_dets, (n_int,2,n_det) ]
 
  v = shiftl(1,n_alpha_in_single) - 1
 
- do i=1,n_det
+ if (shiftl(n_alpha_in_single,1) == n_single_orbital) then
 
-   ! Initialize gen_dets with occ(:,2)
-   gen_dets(:,1,i) = occ(:,2)
-   gen_dets(:,2,i) = occ(:,2)
+  do i=1,n_det,2
 
-   do k=1,n_single_orbital
-      ! Get spin : 1 if alpha, 0 if beta
-      if (btest(v,k-1)) then 
-         ispin = 1
-      else
-         ispin = 2
-      endif
-      ! Set the bit in the determinant
-      gen_dets(iint(k),ispin,i) = ibset( gen_dets(iint(k),ispin,i), ipos(k) )
-   enddo
+    ! Initialize gen_dets with occ(:,2)
+    gen_dets(:,1,i) = occ(:,2)
+    gen_dets(:,2,i) = occ(:,2)
 
-   ! Generate next permutation
-   t = ior(v,v-1)
-   tt = t+1
-   v = ior(tt, shiftr( and(not(t),tt) - 1, trailz(v)+1) )
- enddo
+    do k=1,n_single_orbital
+        ! Get spin : 1 if alpha, 0 if beta
+        if (btest(v,k-1)) then 
+          ispin  = 1
+        else
+          ispin  = 2
+        endif
+        ! Set the bit in the determinant
+        gen_dets(iint(k),ispin,i) = ibset( gen_dets(iint(k),ispin,i), ipos(k) )
+    enddo
+
+    ! Generate next permutation
+    t = ior(v,v-1)
+    tt = t+1
+    v = ior(tt, shiftr( and(not(t),tt) - 1, trailz(v)+1) )
+
+    ! Time reversal symmetry
+    gen_dets(:,1,i+1) = gen_dets(:,2,i)
+    gen_dets(:,2,i+1) = gen_dets(:,1,i)
+
+  enddo
+
+ else
+
+  do i=1,n_det
+
+    ! Initialize gen_dets with occ(:,2)
+    gen_dets(:,1,i) = occ(:,2)
+    gen_dets(:,2,i) = occ(:,2)
+
+    do k=1,n_single_orbital
+        ! Get spin : 1 if alpha, 0 if beta
+        if (btest(v,k-1)) then 
+          ispin = 1
+        else
+          ispin = 2
+        endif
+        ! Set the bit in the determinant
+        gen_dets(iint(k),ispin,i) = ibset( gen_dets(iint(k),ispin,i), ipos(k) )
+    enddo
+
+    ! Generate next permutation
+    t = ior(v,v-1)
+    tt = t+1
+    v = ior(tt, shiftr( and(not(t),tt) - 1, trailz(v)+1) )
+  enddo
+
+ endif
 
 END_PROVIDER
 
