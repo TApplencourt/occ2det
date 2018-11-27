@@ -30,13 +30,14 @@
 \newcommand{\cipsi}{\textsc{cipsi}}
 \newcommand{\csf}{\textsc{csf}}
 \newcommand{\mel}[3]{\langle #1 | #2 | #3 \rangle}
+\newcommand{\ept}{E_\text{PT2}}
 
 
 
 
 \begin{document}
 
-\title{A fast algorithm to enforce spin-pure wave functions in selected configuration interaction}
+\title{Enforcing spin-purity in determinant-based selected configuration interaction}
 
 % Kevin and Thomas : put the authors in the whatever order you prefer
 % Kevin : Is your affiliation correct?
@@ -98,7 +99,10 @@ Following this idea, imposing spin purity in sCI methods can be done by
 \item Diagonalizing the Hamiltonian in this expanded determinant space.
 \end{enumerate}
 An efficient algorithm to achieve this procedure is presented in this letter,
-and was implemented in the \emph{Quantum Package}.\cite{qp}
+and then a modification to the Epstein-Nesbet perturbation expression is
+proposed to reduce the invariance bias with respect to the $m_s$ at no cost.
+All the proposed algorithms were implemented in the
+\emph{Quantum Package}.\cite{qp}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -269,51 +273,120 @@ Hence, it suffices to iterate over the half of the permutations of Anderson's
 algorithm, and then generate the symmetric determinants.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Modified Epstein-Nesbet Energy denominators}
+\section{Shifted Epstein-Nesbet denominators}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-An advantage of \csf s over determinants is that the Epstein-Nesbet
-second-order perturbative correction is invariant with respect to the quantum
-number $m_s$. But this is not the case with determinants.
+%An advantage of \csf s over determinants is that the Epstein-Nesbet
+%second-order perturbative correction is invariant with respect to the quantum
+%number $m_s$. But this is not the case in the determinant basis.
 
-If the wave function $\ket{\Psi} = \sum_i C_i \ket{D_i}$ is perturbed by a
-determinant $\ket{D_\alpha}$, the second-order contribution of $\ket{D_\alpha}$
-to the energy is 
+Let us consider a normalized spin-pure wave function with energy $E$, expressed as
 \begin{equation}
-\sum_{ij} C_i\, C_j
-  \frac{
-    \mel{D_i}{\hat{H}}{D_\alpha}\mel{D_\alpha}{\hat{H}}{D_j}
-}{
-    E-\mel{D_\alpha}{\hat{H}}{D_\alpha}
-}
-\label{eq:pt2det}
+\ket{\Psi} = \sum_{i \in \mathcal{I}} c_i \ket{D_i}
 \end{equation}
-In the \csf{} formalism, the wave function $\ket{\Psi} = \sum_i A_i
-\ket{\chi_i}$ is perturbed by a \csf{} $\ket{\chi_\alpha}$.
-the second-order perturbative contribution is given by
+which is an eigenfunction of the Hamiltonian projected in the internal space of
+determinants $\mathcal{I}$.
+The variance of the energy associated with this function is
 \begin{equation}
-\sum_{ij} A_i\, A_j
-  \frac{
-    \mel{\chi_i}{\hat{H}}{\chi_\alpha}\mel{\chi_\alpha}{\hat{H}}{\chi_j}
-}{
-    E-\mel{\chi_\alpha}{\hat{H}}{\chi_\alpha}
-}
-\label{eq:pt2csf}
+\sigma^2 = \mel{\Psi}{\hat{H}^2}{\Psi} - \mel{\Psi}{\hat{H}}{\Psi}^2 .
 \end{equation}
-Expressing the \csf{} in the basis of determinants,
+Inserting the resolution of the identity for $\hat{H}^2$, 
 \begin{equation}
-\chi_i = \sum_k b_{ik} \ket{D_{ik}}
+\sigma^2 = \sum_{\alpha \in \text{FCI}} \mel{\Psi}{\hat{H}}{\alpha} \mel{\alpha}{\hat{H}}{\Psi} - E^2
+\label{eq:ri}
 \end{equation}
-one obtains
+where $\text{FCI}$ denotes a complete set of are arbitrary orthonormal basis
+functions, $\ket{\alpha}$, spanning the Full Configuration Interaction (FCI)
+space.
+The FCI space can be split in three subspaces:
+\begin{itemize}
+\item The internal space $\mathcal{I}$
+\item The external space $\mathcal{E}$ which is the subset of $\ket{\alpha}$ which
+      don't belong to $\mathcal{I}$, and for which $\mel{\Psi}{\hat{H}}{\alpha}
+      \ne 0$
+\item The rest of the FCI space.
+\end{itemize}
+$\hat{H}$ is symmetric, so Eq.~\eqref{eq:ri} can be re-written as
 \begin{equation}
-\sum_{ijklm} A_i\, A_j\, b_{ik}\, b_{jl}\, b_{\alpha m}\,
-  \frac{
-    \mel{D_{ik}}{\hat{H}}{D_{\alpha m}}\mel{D_{\alpha m}}{\hat{H}}{D_{jl}}
-}{
-    E-\mel{\chi_\alpha}{\hat{H}}{\chi_\alpha}
-}
-\label{eq:pt2csf}
+\sigma^2 = \sum_{D_I    \in \mathcal{I}} \mel{D_I}{\hat{H}}{\Psi}^2 
+         + \sum_{\alpha \in \mathcal{E}} \mel{\Psi}{\hat{H}}{\alpha} \mel{\alpha}{\hat{H}}{\Psi} - E^2.
 \end{equation}
+As $\ket{\Psi}$ is an eigenfunction of $\hat{H}$ projected in $\mathcal{I}$, 
+\begin{equation}
+\mel{D_I}{\hat{H}}{\Psi}^2 = \left( E\, \langle D_I | \Psi \rangle \right)^2 = E^2 c_I^2,
+\end{equation}
+and as $\ket{\Psi}$ is normalized, one obtains
+\begin{equation}
+\sigma^2 = \sum_{\alpha \in \mathcal{E}} \mel{\Psi}{\hat{H}}{\alpha}\mel{\alpha}{\hat{H}}{\Psi}.
+\end{equation} 
+
+The variance of the energy is invariant with respect to the form of the
+functions $\ket{\alpha}$, as long as they are orthonormal functions spanning
+the space $\mathcal{E}$.  Moreover, the variance of the energy is the equal for
+degenerate wave functions with different quantum numbers $m_s$.  Hence, one can
+choose equivalently the $\ket{\alpha}$ to be Slater determinants or
+\csf s.
+
+The Epstein-Nesbet second-order perturbative contribution to the energy is given
+by
+\begin{equation}
+\ept = \sum_{\alpha \in \mathcal{E}} \frac{\mel{\Psi}{\hat{H}}{\alpha}\mel{\alpha}{\hat{H}}{\Psi}}{E-\mel{\alpha}{\hat{H}}{\alpha}}.
+\label{eq:pt2}
+\end{equation}
+This equation can be seen as a weighted sum of the different terms involved in
+the expression of the variance. However, the weights differ depending on the
+choice of $\ket{\alpha}$. Also, when a basis of Slater determinants is chosen,
+this expression is not invariant with respect to the choice of $m_s$, which
+is not desirable.
+
+A way to cure the invariance with respect to $m_s$ is to impose all the weights
+to be the same for all the determinants belonging to the same \csf . But as 
+the same determinant can appear in the expression of multiple \csf s, one can
+instead impose that the weight is the same for all the determinants belonging
+to the same \sop .  This can be done by inserting a determinant-specific shift
+to the denominator 
+\begin{equation}
+\ept = \sum_{\alpha \in \mathcal{E}} \frac{\mel{\Psi}{\hat{H}}{\alpha}\mel{\alpha}{\hat{H}}{\Psi}}{E-\mel{\alpha}{\hat{H}}{\alpha}+\epsilon_\alpha}.
+\end{equation}
+with
+\begin{equation}
+\epsilon_\alpha = \mel{\alpha}{\hat{H}}{\alpha} - E_\alpha
+\end{equation}
+where the shift is chosen to be
+\begin{equation}
+E_\alpha = \min_{\beta \in \text{\sop}(\alpha)} \mel{\beta}{\hat{H}}{\beta}.
+\end{equation}
+This choice of $E_\alpha$ is a good enough approximation to
+$\mel{\alpha}{\hat{H}}{\alpha}$ in the basis of \csf s.
+
+Although the generation of all the determinants is extremely fast, using
+this approximation is quite expensive since it requires to compute
+all the $\mel{\beta}{\hat{H}}{\beta}$ for each $\ket{\alpha}$.
+To circumvent this problem, one can remark that for most of the contributions to
+\begin{equation}
+ \langle \Psi | \hat{H} | \alpha \rangle = \sum_i c_i \langle D_i | \hat{H} | \alpha \rangle
+\end{equation}
+$\ket{\alpha}$ is doubly excited with respect to $D_i$.
+For all the determinants $D_j$ belonging to the same \sop{} as $D_i$, one can
+define a double excitation operator
+\begin{equation}
+\hat{T}_{i\rightarrow j} D_i = D_j.
+\end{equation}
+Remarking that
+\begin{equation}
+\langle \hat{T}_{i\rightarrow j} D_i | \hat{H} | \hat{T}_{i\rightarrow j} \alpha \rangle =
+\begin{cases}
+\pm \langle D_i | \hat{H} | \alpha \rangle & \text{ if } \hat{T}_{i\rightarrow j} \ne 0 \\
+0 & \text{otherwise},
+\end{cases}
+\end{equation}
+all the contributions connected by $\hat{H}$ to $D_j$ will be shifted by 
+\begin{align}
+E_\alpha & = \langle \hat{T}_{i\rightarrow j} \alpha | \hat{H} | \hat{T}_{i\rightarrow j} \alpha \rangle - \langle \alpha | \hat{H} | \alpha \rangle \\
+         & \approx \langle D_j | \hat{H} | D_j \rangle - \langle D_i | \hat{H} | D_i \rangle  = E_j
+\end{align}
+Hence, the shifts $E_j$ can be precomputed, and applied at no cost.
+
 
 
 
