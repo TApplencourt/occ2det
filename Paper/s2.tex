@@ -29,6 +29,7 @@
 \newcommand{\sop}{\textsc{sop}}
 \newcommand{\cipsi}{\textsc{cipsi}}
 \newcommand{\csf}{\textsc{csf}}
+\newcommand{\mel}[3]{\langle #1 | #2 | #3 \rangle}
 
 
 
@@ -64,17 +65,12 @@ especially for the accurate calculation of electronic excitation
 energies.\cite{Coe_2013,Schriber_2017,Holmes_2017,Loos_2018,Scemama_2018,Dash_2018}
 A balanced description of excited states and accurate dissociation curves require
 the wave functions to be spin-pure, i.e. eigenfunctions of the $\stwo$
-operator.  A natural option would be to reformulate sCI in terms of
+operator. A natural option would be to reformulate sCI in terms of
 configuration state functions (\csf), but many codes were written in a
 determinant-based formulation and opting for the {\csf} formalism would require
-a major re-writing of the software.
+a major re-writing of the software. Moreover, such a modification might
+increase the computational cost.\cite{Knowles_1984,Olsen_1988}
 
-%but such a modification might increase the computational cost
-%of the selection procedure: for instance, with the \cipsi
-%selection\cite{Bender_1969,Whitten_1969,Huron_1973} the computation of the
-%perturbative contribution of a {\csf} would require the computation of all the
-%individual contributions of the determinants included in the \csf, which can
-%be large with many open shells.
 In the context of heat-bath selection, Holmes \textit{et al} have 
 improved the spin purity of the wave functions by introducing ``time-reversal
 symmetry''\cite{Holmes_2017}, which consists in exchanging the spin labels of
@@ -276,6 +272,48 @@ algorithm, and then generate the symmetric determinants.
 \section{Modified Epstein-Nesbet Energy denominators}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+An advantage of \csf s over determinants is that the Epstein-Nesbet
+second-order perturbative correction is invariant with respect to the quantum
+number $m_s$. But this is not the case with determinants.
+
+If the wave function $\ket{\Psi} = \sum_i C_i \ket{D_i}$ is perturbed by a
+determinant $\ket{D_\alpha}$, the second-order contribution of $\ket{D_\alpha}$
+to the energy is 
+\begin{equation}
+\sum_{ij} C_i\, C_j
+  \frac{
+    \mel{D_i}{\hat{H}}{D_\alpha}\mel{D_\alpha}{\hat{H}}{D_j}
+}{
+    E-\mel{D_\alpha}{\hat{H}}{D_\alpha}
+}
+\label{eq:pt2det}
+\end{equation}
+In the \csf{} formalism, the wave function $\ket{\Psi} = \sum_i A_i
+\ket{\chi_i}$ is perturbed by a \csf{} $\ket{\chi_\alpha}$.
+the second-order perturbative contribution is given by
+\begin{equation}
+\sum_{ij} A_i\, A_j
+  \frac{
+    \mel{\chi_i}{\hat{H}}{\chi_\alpha}\mel{\chi_\alpha}{\hat{H}}{\chi_j}
+}{
+    E-\mel{\chi_\alpha}{\hat{H}}{\chi_\alpha}
+}
+\label{eq:pt2csf}
+\end{equation}
+Expressing the \csf{} in the basis of determinants,
+\begin{equation}
+\chi_i = \sum_k b_{ik} \ket{D_{ik}}
+\end{equation}
+one obtains
+\begin{equation}
+\sum_{ijklm} A_i\, A_j\, b_{ik}\, b_{jl}\, b_{\alpha m}\,
+  \frac{
+    \mel{D_{ik}}{\hat{H}}{D_{\alpha m}}\mel{D_{\alpha m}}{\hat{H}}{D_{jl}}
+}{
+    E-\mel{\chi_\alpha}{\hat{H}}{\chi_\alpha}
+}
+\label{eq:pt2csf}
+\end{equation}
 
 
 
@@ -327,6 +365,9 @@ same energy as the $m_s=6$ single determinant.
 \section{Conclusion}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+We have presented a general algorithm to complement an arbitrary wave function
+with all the required determinants to obtain eigenstates of the $\stwo$
+operator when the Hamiltonian is diagonalized, in a negligible time.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
