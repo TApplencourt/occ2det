@@ -12,7 +12,7 @@
 \newcommand{\alert}[1]{\textcolor{red}{#1}}
 \newcommand{\ket}[1]{|#1\rangle}
 \newcommand{\stwo}{\hat{S}^2}
-\newcommand{\tv}{\mathtt{v}}
+\newcommand{\tu}{\mathtt{u}}
 \newcommand{\ttt}{\mathtt{t}}
 \newcommand{\mb}{\mathtt{b}}
 \newcommand{\md}{\mathtt{d}}
@@ -45,41 +45,47 @@
 \author{Anthony Scemama}
 \affiliation{Laboratoire de Chimie et Physique Quantiques, Université de Toulouse, CNRS, UPS, France}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
 \end{abstract}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \keywords{Selected Configuration Interaction ; Spin purity }
 
 \maketitle
 
-%----------------------------------------------------------------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
-%----------------------------------------------------------------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 In recent years, selected configuration interaction (sCI) methods have regained in
 popularity,\cite{Greer_1998,Stampfuss_2005,Bytautas_2009,Booth_2009,Giner_2013,Buenker_2014,Holmes_2016,Ohtsuka_2017,Coe_2018}
 especially for the accurate calculation of electronic excitation
 energies.\cite{Coe_2013,Schriber_2017,Holmes_2017,Loos_2018,Scemama_2018,Dash_2018}
-A balanced description of excited states requires the wave functions to be
-spin-pure, i.e. eigenfunctions of the $\stwo$ operator.
-A natural option would be to reformulate sCI in terms of configuration state
-functions (\csf), but such a modification might increase the computational cost
-of the selection procedure: for instance, with the \cipsi
-selection\cite{Bender_1969,Whitten_1969,Huron_1973} the computation of the
-perturbative contribution of a \csf would require the computation of all the
-individual contributions of the determinants included in the \csf, which can
-be large with many open shells.
-In the context of heat-bath selection, Holmes \textit{et al} have proposed to
-improve the spin purity of the wave functions by introducing ``time-reversal
+A balanced description of excited states and accurate dissociation curves require
+the wave functions to be spin-pure, i.e. eigenfunctions of the $\stwo$
+operator.  A natural option would be to reformulate sCI in terms of
+configuration state functions (\csf), but many codes were written in a
+determinant-based formulation and opting for the {\csf} formalism would require
+a major re-writing of the software.
+
+%but such a modification might increase the computational cost
+%of the selection procedure: for instance, with the \cipsi
+%selection\cite{Bender_1969,Whitten_1969,Huron_1973} the computation of the
+%perturbative contribution of a {\csf} would require the computation of all the
+%individual contributions of the determinants included in the \csf, which can
+%be large with many open shells.
+In the context of heat-bath selection, Holmes \textit{et al} have 
+improved the spin purity of the wave functions by introducing ``time-reversal
 symmetry''\cite{Holmes_2017}, which consists in exchanging the spin labels of
-the electrons.
+the electrons. 
 However, when the number of open shells is large, time-reversal symmetry is not
 sufficient to generate all the required spin permutations among the open shells
 which would generate all the determinants of the corresponding \csf.
 
 Recently, Bytautas and Ruedenberg proposed a simple scheme to truncate large
 spin-pure wave functions while keeping the spin-purity.\cite{Bytautas_2007}
-By definition, all the determinants belonging to the same \csf have the same
+By definition, all the determinants belonging to the same {\csf} have the same
 \emph{spatial occupation pattern} (\sop), so the
 coefficients of the determinants having the same {\sop}
 are summed together to produce the so-called \emph{space-product
@@ -98,9 +104,10 @@ Following this idea, imposing spin purity in sCI methods can be done by
 An efficient algorithm to achieve this procedure is presented in this letter,
 and was implemented in the \emph{Quantum Package}.\cite{qp}
 
-%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Algorithm}
-%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 Each Slater determinant $\mD_I$ is represented as a Waller-Hartree double
 determinant,\cite{Pauncz_1989}
@@ -129,10 +136,12 @@ Gold 6140 CPU @ 2.30GHz with the GNU Fortran compiler 7.3.0, by reading
 the time stamp counter of the CPU with the \texttt{rdtsc} instruction.
 
 
+%-----------------------------------------------------------
 \subsection{Identification of the space occupation patterns}
+%-----------------------------------------------------------
 
-The {\sop} $\mpv_I$ of determinant $\mD_I$ 
-%defined in Eq.\eqref{eq:di}
+The {\sop} $\mpv_I$ of determinant $\mD_I$, 
+defined in Eq.\eqref{eq:di},
 is a vector of integers defined as
 \begin{equation}
   [\mpv_I]_k = 
@@ -158,7 +167,10 @@ where $\oplus$ denotes the \texttt{xor} operator and $\wedge$ denotes the
 Transforming all the determinants into a list of unique \sop s can be done
 in linear time, if a hash value is associated with each \sop .\cite{Bitton_1983}
 
+
+%--------------------------------------------
 \subsection{Generating all the determinants}
+%--------------------------------------------
 
 
 Given a {\sop}, one needs to generate all the possible excitations that can
@@ -175,30 +187,31 @@ corresponding bit will be set to \one{}, otherwise it will be set to \zero{}.
 \begin{figure}[t]
 \begin{algorithmic}
 \Function{compute\_permutations}{$n,m$}
-  \LeftComment{$n$: input, number of bits set to 1}
-  \LeftComment{$m$: input, number of bits set to 0}
-  \LeftComment{$p$: output, an array of permutations}
-  \LeftComment{$v$, $t$, $t'$, $t''$ and $p$ are encoded in at least $n+m+1$ bits}
-  \State $k \gets 0$
-  \State $v \gets (1 \ll n) - 1$
-  \State $p[0] \gets v$
-  \While {$v < \left(1 \ll (n+m) \right) $}
-    \State $k \gets k+1$
-    \State $t \gets v \vee (v-1)$
-    \State $t' \gets t + 1$\
-    \State $t'' \gets \left((\neg t \wedge t')-1 \right) \gg (ctz(v)+1)$
-    \State $p[k] \gets t' \vee t''$
+  \LeftComment{$\mathtt{n}$: input, number of bits set to \one}
+  \LeftComment{$\mathtt{m}$: input, number of bits set to \zero}
+  \LeftComment{$\mathtt{v}$: output, an array of permutations}
+  \LeftComment{$\mathtt{u}$, $\mathtt{t}$, $\mathtt{t'}$, $\mathtt{t''}$ and
+               $\mathtt{v}$ are encoded in at least $\mathtt{n+m+1}$ bits}
+  \State $\mathtt{k \gets 0}$
+  \State $\mathtt{u \gets (1 \ll n) - 1}$
+  \State $\mathtt{v[0] \gets u}$
+  \While {$\mathtt{u < \left(1 \ll (n+m) \right) }$}
+    \State $\mathtt{k \gets k+1}$
+    \State $\mathtt{t \gets u \vee (u-1)}$
+    \State $\mathtt{t' \gets t + 1}$\
+    \State $\mathtt{t'' \gets \left((\neg t \wedge t')-1 \right) \gg (ctz(u)+1)}$
+    \State $\mathtt{v[k] \gets t' \vee t''}$
   \EndWhile
-  \State \Return $p$
+  \State \Return $\mathtt{v}$
 \EndFunction
 \end{algorithmic}
-\caption{Anderson's algorithm to generate all the patterns of $n$ bits set to
-$1$ in an integer of $n+m$ bits in lexicographic order.
-$ctz$ counts the number of trailing zeros, 
-$i \ll n$~: shifts $i$ $n$ bits to the left, 
-$i \gg n$~: shifts $i$ $n$ bits to the right, 
-$\wedge$~: bit-wise \texttt{and} operation, and
-$\vee$~: bit-wise \texttt{or} operation.}
+\caption{ Anderson's algorithm to generate all the patterns of $\mathtt{n}$ bits
+          set to \one{} in an integer of $\mathtt{n+m}$ bits in lexicographic order.
+          $\mathtt{ctz}$ counts the number of trailing zeros, 
+          $\mathtt{i \ll n}$~: shifts $\mathtt{i}$ $\mathtt{n}$ bits to the left, 
+          $\mathtt{i \gg n}$~: shifts $\mathtt{i}$ $\mathtt{n}$ bits to the right, 
+          $\mathtt{\wedge}$~: bit-wise \texttt{and} operation, and
+          $\mathtt{\vee}$~: bit-wise \texttt{or} operation.}
 \label{fig:algo}
 \end{figure}
 
@@ -211,13 +224,13 @@ the patterns of $n_\up$ bits set to $1$ in a bit string of length $n_\up+n_\dn$
 in lexicographical order. For example, with $n_\up=2$ and $n_\dn=2$
 it generates \texttt{(0011, 0101, 0110, 1001, 1010, 1100)}.
 
-The bit string $\tv$ is initialized with the smallest possible unsigned integer with
+The bit string $\tu$ is initialized with the smallest possible unsigned integer with
 $n_\up$ bits set to \one, which is $2^{n_\up+1}-1$. Then, the
-following steps are iterated until $\tv$ becomes greater than $2^{n_\up+n_\dn}-1$:
+following steps are iterated until $\tu$ becomes greater than $2^{n_\up+n_\dn}-1$:
 \begin{enumerate}
-    \item Set all the least significant \zero{} bits of $\tv$ to \one{}, add \one{} and store the result in $\ttt$. The least significant \one{} of $\ttt$ marks the position in $\tv$ of the most significant \zero{} that should be changed into a \one{}.
-    \item The position of the least significant \one{} of $\tv$ is identified by counting the number of trailing zeros in $\tv$. This \one{} should be changed into a \zero{}.
-    \item At the right of this position, the least significant \zero's should be changed in \one's such that the total number of \one's is the same as in $\tv$.
+    \item Set all the least significant \zero{} bits of $\tu$ to \one{}, add \one{} and store the result in $\ttt$. The least significant \one{} of $\ttt$ marks the position in $\tu$ of the most significant \zero{} that should be changed into a \one{}.
+    \item The position of the least significant \one{} of $\tu$ is identified by counting the number of trailing zeros in $\tu$. This \one{} should be changed into a \zero{}.
+    \item At the right of this position, the least significant \zero's should be changed in \one's such that the total number of \one's is the same as in $\tu$.
 \end{enumerate}
 The corresponding pseudo-code is presented in Fig.~\ref{fig:algo}. On average, one loop cycle executes in only $8.2$~CPU cycles.
 
@@ -231,28 +244,49 @@ mapping is re-used to build the determinants from permutations generated by Ande
 \end{figure}
 
 Figure~\ref{fig:mapping} gives a pictorial description of the data structures used to generate a determinant.
-To build a generated determinant $(\md_\up,\md_\dn)$ from a permutation $\tv$, one needs to
+To build a generated determinant $(\md_\up,\md_\dn)$ from a permutation $\tu$, one needs to
 \begin{enumerate}
     \item Fill the doubly occupied orbitals by setting both $\md_\up$ and $\md_\dn$
           equal to $\mpp_I^{(2)}$
-    \item Iterate over the bits of $\tv$. If the $k$-bit is set to \one{}, set the $m_k$-th orbital of $d_\up$ to \one, otherwise set the $m_k$-th orbital of $d_\up$ to \one.
+    \item Iterate over the bits of $\tu$. If the $k$-bit is set to \one{}, set the $m_k$-th orbital of $d_\up$ to \one, otherwise set the $m_k$-th orbital of $d_\up$ to \one.
 \end{enumerate}
 
+\subsection{Further optimizations}
 
+As a first optimization, all the possible permutations can be generated
+iteratively by considering only what has changed between the previously
+generated determinant and the current one.
+The integer obtained by $\mathtt{v[k-1]} \oplus \mathtt{v[k]}$ has bits set at
+the positions where the bits differ between $\mathtt{v[k-1]}$ and
+$\mathtt{v[k]}$. The positions of these bits can be found by iteratively
+\begin{enumerate}
+\item counting the number of trailing zeros
+\item setting the least significant {\one} to {\zero} by setting
+      $\mathtt{v[k] \gets v \wedge (v-1)}$
+\end{enumerate}
+until $v[k] = 0$. Hence, a determinant can be generated from the previous
+one in the sequence with less computational effort.
 
-%----------------------------------------------------------------
+A second optimization is to consider time-reversal symmetry. When $n_\up =
+n_\dn$, one can remark that $\mathtt{v[}2^{n_\up+n_\dn}-1-\mathtt{k]} = \neg \mathtt{v[k]}$.
+Hence, it suffices to iterate over the half of the permutations of Anderson's
+algorithm, and then generate the symmetric determinants.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Modified Epstein-Nesbet Energy denominators}
-%----------------------------------------------------------------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 
 
-%----------------------------------------------------------------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Numerical tests}
-%----------------------------------------------------------------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
+%--------------------------------------------
 \subsection{Open-shell system}
+%--------------------------------------------
 
 To test our implementation with a large number of open shells, we have prepared
 model wave functions for the dissociated Chromium dimer in its 13-et state, separated by a
@@ -284,15 +318,18 @@ we checked that the lowest state with $\langle \stwo \rangle = 42$ had the exact
 same energy as the $m_s=6$ single determinant.
 
 
+%--------------------------------------------
 \subsection{Closed-shell system}
+%--------------------------------------------
 
 
-%----------------------------------------------------------------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusion}
-%----------------------------------------------------------------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-%----------------------------------------------------------------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \begin{acknowledgments}
 The authors gratefully acknowledge Sean Eron Anderson for creating the 
 \emph{Bit Twiddling Hacks} web page.
@@ -301,7 +338,7 @@ allocations 2018-0510 and 2018-18005 and from GENCI-TGCC (Grant
 2018-A0040801738).
 \end{acknowledgments}
 
-%----------------------------------------------------------------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \bibliography{s2}
 

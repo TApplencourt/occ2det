@@ -10,7 +10,7 @@ $(TEX).pdf: $(TEX).tex $(TEX).bib
 #	- dvipdf $(TEX)
 #	- latexmk -pdf || make all
 
-all: $(TEX).tex
+all: $(TEX).tex pattern.tikz
 	- $(CC) $(TEX)
 	- $(CC) $(TEX)
 	- @bibtex $(TEX)

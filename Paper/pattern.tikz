@@ -69,7 +69,7 @@
 	}
 
     % v
-   \node at (-0.5,0+\YY) { $\mathtt{v}$ };
+   \node at (-0.5,0+\YY) { $\mathtt{v[k]}$ };
 	\foreach \x in {0,...,3} {
 	 	\draw[fill=yellow!20!white] (\x,-0.5+\YY) rectangle (\x+1,0.5+\YY) ;	
 		\node at (\x+0.2,-0.7+\YY) { \scriptsize \texttt{\x} };
