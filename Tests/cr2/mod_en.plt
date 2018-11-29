@@ -171,5 +171,5 @@ set fit brief errorvariables nocovariancevariables errorscaling prescale nowrap 
 GNUTERM = "qt"
 x = 0.0
 ## Last datafile plotted: "data"
-plot 'data' index 0 u 2:3 w lp title "Modified EN, m_s=6", 'data' index 1 u 2:3 w lp title "Modified EN, m_s=0"
+replot 'data' index 0 u 2:3 w lp title "Modified EN, m_s=6", 'data' index 1 u 2:3 w lp title "Modified EN, m_s=0"
 #    EOF

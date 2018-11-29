@@ -10,8 +10,8 @@
 #    	gnuplot home:     http://www.gnuplot.info
 #    	faq, bugs, etc:   type "help FAQ"
 #    	immediate help:   type "help"  (plot window: hit 'h')
-# set terminal qt 0 font "Sans,9"
-# set output
+set terminal pdfcairo  transparent enhanced fontscale 0.5 size 5.00in, 3.00in 
+set output '../../Paper/e_var_ndet.pdf'
 unset clip points
 set clip one
 unset clip two
@@ -41,7 +41,7 @@ set tics back
 set grid nopolar
 set grid xtics nomxtics ytics nomytics noztics nomztics \
  nox2tics nomx2tics noy2tics nomy2tics nocbtics nomcbtics
-set grid layerdefault   lt 0 linewidth 0.500,  lt 0 linewidth 0.500
+set grid layerdefault   lt 0 linewidth 0.500 dashtype solid,  lt 0 linewidth 0.500 dashtype solid
 set raxis
 set style parallel front  lt black linewidth 2.000 dashtype solid
 set key title "" center
@@ -125,13 +125,13 @@ set rrange [ * : * ] noreverse nowriteback
 set trange [ * : * ] noreverse nowriteback
 set urange [ * : * ] noreverse nowriteback
 set vrange [ * : * ] noreverse nowriteback
-set xlabel "Number of SOP" 
+set xlabel "Number of Slater determinants" 
 set xlabel  font "" textcolor lt -1 norotate
 set x2label "" 
 set x2label  font "" textcolor lt -1 norotate
 set xrange [ * : * ] noreverse nowriteback
 set x2range [ * : * ] noreverse nowriteback
-set ylabel "Variational energy" 
+set ylabel "E (au)" 
 set ylabel  font "" textcolor lt -1 rotate by -270
 set y2label "" 
 set y2label  font "" textcolor lt -1 rotate by -270
@@ -171,5 +171,5 @@ set fit brief errorvariables nocovariancevariables errorscaling prescale nowrap 
 GNUTERM = "qt"
 x = 0.0
 ## Last datafile plotted: "data"
-plot 'data' index 0 u 2:5 w lp title "m_s=6", 'data' index 1 u 2:5 w lp title "m_s=0"
+plot 'data' index 3 u 1:5 w lp title "m_s=0, spin pure", 'data' index 0 u 1:5 w lp title "m_s=6, spin pure", 'data' index 2 u 1:5 w lp title "m_s=6, spin impure"
 #    EOF

@@ -403,14 +403,14 @@ Hence, the shifts $E_j$ can be precomputed, and applied at no cost.
 
 To test our implementation with a large number of open shells, we have prepared
 model wave functions for the dissociated Chromium dimer in its 13-et state, separated by a
-distance of $100~\AA$, using the def2-SVP basis.\cite{Weigend_2005}
+distance of $100$~\AA, using the def2-SVP basis.\cite{Weigend_2005}
 At such a large distance, each Chromium atom is in its high-spin state with $6$
 unpaired electrons. Two equivalent wave functions are built to initialize the sCI
 calculation:
 \begin{itemize}
 \item The $m_s=6$ wave function, which is a single determinant with $30$ $\up$
       and $18$ $\dn$ electrons.
-\item The $m_s=0$ 13-et wave function with $24$ $\up$ and $24$ $\dn$ electrons, which
+\item The 13-et $m_s=0$ wave function with $24$ $\up$ and $24$ $\dn$ electrons, which
       contains 924 determinants
 \end{itemize}
 The system is composed of $62$ molecular orbitals, so for this simple case $\Nint=1$.
@@ -422,13 +422,37 @@ The selection is performed in the valence Full-CI space, with $20$ frozen electr
 %E(ROHF,ms=6) = -2086.393627426404
 %E(ROHF,ms=0) = -2086.393627426463
 
-The $m_s=0$ wave function was initialized by taking the {\sop} of the single determinant
-of the $m_s=6$ wave function, and generating all the possible determinants using 
-the algorithm presented in the previous section.
-The generation of the $924$ determinants was done in $\sim 19~200$ CPU cycles,
-i.e. $21$~cycles per generated determinant. The Hamiltonian was diagonalized and
-we checked that the lowest state with $\langle \stwo \rangle = 42$ had the exact
-same energy as the $m_s=6$ single determinant.
+The $m_s=0$ wave function was initialized by taking the same {\sop} as the
+one of the single determinant of the $m_s=6$ wave function, and generating all
+the possible determinants using the algorithm presented in the previous
+section.  The generation of the $924$ determinants was done in $\sim 19~200$
+CPU cycles, i.e.  $21$~cycles per generated determinant. The Hamiltonian was
+diagonalized and we checked that the lowest state with $\langle \stwo \rangle =
+42$ had the exact same energy as the $m_s=6$ single determinant.
+
+\begin{figure}
+\includegraphics[width=0.9\columnwidth]{e_var_ndet}
+\caption{Variational energy of dissociated Cr$_2$ as a function of the number of
+selected Slater determinants in the wave function expansion.}
+\label{fig:e_var_ndet}
+\end{figure}
+
+\begin{figure}
+\includegraphics[width=0.9\columnwidth]{e_var_nsop}
+\caption{Variational energy of dissociated Cr$_2$ as a function of the number of
+selected \sop{}.}
+\label{fig:e_var_nsop}
+\end{figure}
+
+For the $m_s=6$ wave function, we have run a CIPSI selection imposing or not the
+wave function to be spin pure. As expected, for the same energy the number of
+determinants is increased when spin purity is imposed. Then, we have run the
+CIPSI selection for the $m_s=0$ wave function imposing the
+spin purity. The convergence of the energy is plotted as a function of the
+number of determinants in figure~\ref{fig:e_var_ndet}, and as a function of
+the number of \sop{} in figure~\ref{fig:e_var_nsop}.
+From figure~\ref{fig:e_var_nsop}, it is striking that the $m_s=0$ and $m_s=6$
+wave functions are indeed equivalent.
 
 
 %--------------------------------------------
