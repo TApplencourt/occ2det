@@ -37,24 +37,23 @@
 
 \begin{document}
 
-\title{Enforcing spin-purity in determinant-based selected configuration interaction}
+\title{Enforcing spin adaptation in determinant-based selected configuration
+interaction}
 
-% Kevin and Thomas : put the authors in the whatever order you prefer
-% Kevin : Is your affiliation correct?
 \author{Thomas Applencourt}
 \affiliation{Argonne Leadership Computing Facility, Argonne National Laboratory, Argonne, Illinois 60439 USA}
 \author{Kevin Gasperich}
 \affiliation{Computational Science Division, Argonne National Laboratory, Argonne, Illinois 60439 USA}
 \affiliation{Department of Chemistry, University of Pittsburgh, Pittsburgh, Pennsylvania 15260 USA}
 \author{Anthony Scemama}
-\affiliation{Laboratoire de Chimie et Physique Quantiques, Université de Toulouse, CNRS, UPS, France}
+\affiliation{Laboratoire de Chimie et Physique Quantiques, Universit\'e de Toulouse, CNRS, UPS, France}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
 \end{abstract}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\keywords{Selected Configuration Interaction ; Spin purity }
+\keywords{Selected Configuration Interaction ; Spin adaptation}
 
 \maketitle
 
@@ -62,15 +61,15 @@
 \section{Introduction}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-In recent years, selected configuration interaction (sCI) methods have regained in
+In recent years, selected Configuration Interaction (sCI) methods have seen a resurgence in
 popularity,\cite{Greer_1998,Stampfuss_2005,Bytautas_2009,Booth_2009,Giner_2013,Buenker_2014,Holmes_2016,Ohtsuka_2017,Coe_2018}
 especially for the accurate calculation of electronic excitation
 energies.\cite{Coe_2013,Schriber_2017,Holmes_2017,Loos_2018,Scemama_2018,Dash_2018}
 A balanced description of excited states and accurate dissociation curves require
-the wave functions to be spin-pure, i.e. eigenfunctions of the $\stwo$
+the wave functions to be spin adapted, i.e. eigenfunctions of the $\stwo$
 operator. A natural option would be to reformulate sCI in terms of
-configuration state functions (\csf), but many codes were written in a
-determinant-based formulation and opting for the {\csf} formalism would require
+Configuration State Functions (\csf), but many codes were written in a
+determinant-based formulation, and opting for the {\csf} formalism would require
 a major re-writing of the software. Moreover, such a modification might
 increase the computational cost.\cite{Knowles_1984,Olsen_1988}
 
@@ -83,16 +82,16 @@ sufficient to generate all the required spin permutations among the open shells
 which would generate all the determinants of the corresponding \csf.
 
 Recently, Bytautas and Ruedenberg proposed a simple scheme to truncate large
-spin-pure wave functions while keeping the spin-purity.\cite{Bytautas_2007}
+spin-adapted wave functions while keeping the spin adaptation.\cite{Bytautas_2007}
 By definition, all the determinants belonging to the same {\csf} have the same
-\emph{spatial occupation pattern} (\sop), so the
+\emph{Spatial Occupation Pattern} (\sop), so the
 coefficients of the determinants having the same {\sop}
 are summed together to produce the so-called \emph{space-product
 weights}, which are used to truncate the wave function. As spin coupling
 coefficients are included in the CI expansion, the truncated wave function is
 also an eigenfunction of $\stwo$.
 
-Following this idea, imposing spin purity in sCI methods can be done by 
+Following this idea, imposing spin adaptation in sCI methods can be done by 
 \begin{enumerate}
 \item Identifying all the space occupation patterns of the determinants composing
       the variational space
@@ -103,8 +102,7 @@ Following this idea, imposing spin purity in sCI methods can be done by
 An efficient algorithm to achieve this procedure is presented in this letter,
 and then a modification to the Epstein-Nesbet perturbation expression is
 proposed to reduce the invariance bias with respect to the $m_s$ at no cost.
-All the proposed algorithms were implemented in the
-\emph{Quantum Package}.\cite{qp}
+All the proposed algorithms were implemented in the \emph{Quantum Package} software.\cite{qp}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -119,21 +117,18 @@ determinant,\cite{Pauncz_1989}
 \end{equation}
 the product of a determinant of
 $\up$ spinorbitals with a determinant of $\dn$ spinorbitals.
-Such a representation can be encoded as a pair of bit strings $(\md_i,\md_j)$.
-Within a bit string,
-each bit corresponds to a spinorbital and the bit is set to \one{} when the
-spinorbital is occupied. In low-level languages such as Fortran or C, a bit
+Such a representation can be encoded as a pair of bit strings $(\md_i,\md_j)$ of length $\Norb$,  $\Norb$ being the number of molecular orbitals.
+Within a bit string, each bit corresponds to a spinorbital where the bit is set to \one{} when the
+spinorbital is occupied and \zero{} when the spinorbital is empty. In low-level languages such as Fortran or C, a bit
 string may be stored as an array of $\Nint$ 64-bit integers, where 
 \begin{equation}
   \Nint = \left \lfloor \frac{\Norb-1}{64} \right \rfloor + 1,
 \end{equation}
-$\Norb$ being the number of molecular orbitals.
-This representation
-allows for efficient determinant comparisons using bit-wise operation 
-capabilities of modern processors,\cite{Scemama_2013} and will be convenient
-in the following.
 
-All the CPU cycle measurements were performed  on an Intel(R) Xeon(R)
+This representation allows for efficient determinant comparisons using bit-wise operation 
+capabilities of modern processors\cite{Scemama_2013} and will be convenient in the following.
+
+All the CPU cycle measurements were performed on an Intel(R) Xeon(R)
 Gold 6140 CPU @ 2.30GHz with the GNU Fortran compiler 7.3.0, by reading
 the time stamp counter of the CPU with the \texttt{rdtsc} instruction.
 
@@ -174,17 +169,18 @@ in linear time, if a hash value is associated with each \sop .\cite{Bitton_1983}
 \subsection{Generating all the determinants}
 %--------------------------------------------
 
-
 Given a {\sop}, one needs to generate all the possible excitations that can
 occur in the singly occupied molecular orbitals, keeping the numbers of $\up$
 and $\dn$ electrons fixed.
-All the generated determinants will only differ by the singly occupied orbitals,
+One can remark that all the generated determinants will only differ by the singly occupied orbitals,
 so from now on we will consider a more compact representation: a bit string of
 $n_\up + n_\dn$ bits, where $n_\up$ and $n_\dn$ denote the number of $\up$ and
 $\dn$ unpaired electrons. We keep the indices of the singly occupied orbitals
-in a vector $\mathbf{m}$ for later use.
-To encode a determinant, if the orbital is occupied by an $\up$ electron the
-corresponding bit will be set to \one{}, otherwise it will be set to \zero{}.
+in a look-up table $\mathbf{m}$ for later use.
+One can also remarks that in the intermediate representation of the determinants, $d\up$ is the oppositely of $d\dn$.
+
+%To encode a determinant, if the orbital is occupied by an $\up$ electron the
+%corresponding bit will be set to \one{}, otherwise it will be set to \zero{}.
 
 \begin{figure}[t]
 \begin{algorithmic}
@@ -250,7 +246,7 @@ To build a generated determinant $(\md_\up,\md_\dn)$ from a permutation $\tu$, o
 \begin{enumerate}
     \item Fill the doubly occupied orbitals by setting both $\md_\up$ and $\md_\dn$
           equal to $\mpp_I^{(2)}$
-    \item Iterate over the bits of $\tu$. If the $k$-bit is set to \one{}, set the $m_k$-th orbital of $d_\up$ to \one, otherwise set the $m_k$-th orbital of $d_\up$ to \one.
+    \item Iterate over the bits of $\tu$. If the $k$-bit is set to \one{}, set the $m_k$-th orbital of $d_\up$ to \one, otherwise set the $m_k$-th orbital of $d_\dn$ to \one.
 \end{enumerate}
 
 \subsection{Further optimizations}
@@ -274,15 +270,13 @@ n_\dn$, one can remark that $\mathtt{v[}2^{n_\up+n_\dn}-1-\mathtt{k]} = \neg \ma
 Hence, it suffices to iterate over the half of the permutations of Anderson's
 algorithm, and then generate the symmetric determinants.
 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Shifted Epstein-Nesbet denominators}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%An advantage of \csf s over determinants is that the Epstein-Nesbet
-%second-order perturbative correction is invariant with respect to the quantum
-%number $m_s$. But this is not the case in the determinant basis.
 
-Let us consider a normalized spin-pure wave function with energy $E$, expressed as
+Let us consider a normalized spin-adapted wave function with energy $E$, expressed as
 \begin{equation}
 \ket{\Psi} = \sum_{i \in \mathcal{I}} c_i \ket{D_i}
 \end{equation}
@@ -322,14 +316,14 @@ and as $\ket{\Psi}$ is normalized, one obtains
 \sigma^2 = \sum_{\alpha \in \mathcal{E}} \mel{\Psi}{\hat{H}}{\alpha}\mel{\alpha}{\hat{H}}{\Psi}.
 \end{equation} 
 
-The variance of the energy is invariant with respect to the form of the
-functions $\ket{\alpha}$, as long as they are orthonormal functions spanning
-the space $\mathcal{E}$.  Moreover, the variance of the energy is the equal for
-degenerate wave functions with different quantum numbers $m_s$.  Hence, one can
-choose equivalently the $\ket{\alpha}$ to be Slater determinants or
-\csf s.
+The variance of the energy is doesn't depend on the particular choice of the
+functions $\ket{\alpha}$, as long as they constitute an orthonormal set of
+functions spanning the space $\mathcal{E}$. Moreover, the variance of the
+energy is the equal for degenerate wave functions with different quantum
+numbers $m_s$.  Hence, one can choose equivalently the $\ket{\alpha}$ to be
+Slater determinants or \csf s.
 
-The Epstein-Nesbet second-order perturbative contribution to the energy is given
+The Epstein-Nesbet (EN) second-order perturbative contribution to the energy is given
 by
 \begin{equation}
 \ept = \sum_{\alpha \in \mathcal{E}} \frac{\mel{\Psi}{\hat{H}}{\alpha}\mel{\alpha}{\hat{H}}{\Psi}}{E-\mel{\alpha}{\hat{H}}{\alpha}}.
@@ -343,10 +337,15 @@ is not desirable.
 
 A way to cure the invariance with respect to $m_s$ is to impose all the weights
 to be the same for all the determinants belonging to the same \csf . But as 
-the same determinant can appear in the expression of multiple \csf s, one can
-instead impose that the weight is the same for all the determinants belonging
-to the same \sop .  This can be done by inserting a determinant-specific shift
-to the denominator 
+the same determinant can appear in the expression of multiple \csf s, Davidson
+proposed to use a modified EN zeroth-order Hamiltonian formed from
+diagonal elements averaged over Slater determinants belonging to the same
+\sop{} . This was already implemented 20 years ago in the MELD
+sCI program,\cite{Davidson_1979,Kozlowski_1994} and also in 
+SCIEL.\cite{Sciel}
+This modified zeroth Hamiltonian implies that the weight is the same for all the
+determinants belonging to the same \sop , and one can instead insert a
+determinant-specific shift to the denominator 
 \begin{equation}
 \ept = \sum_{\alpha \in \mathcal{E}} \frac{\mel{\Psi}{\hat{H}}{\alpha}\mel{\alpha}{\hat{H}}{\Psi}}{E-\mel{\alpha}{\hat{H}}{\alpha}+\epsilon_\alpha}.
 \end{equation}
@@ -358,11 +357,11 @@ where the shift is chosen to be
 \begin{equation}
 E_\alpha = \min_{\beta \in \text{\sop}(\alpha)} \mel{\beta}{\hat{H}}{\beta}.
 \end{equation}
-This choice of $E_\alpha$ is a good enough approximation to
-$\mel{\alpha}{\hat{H}}{\alpha}$ in the basis of \csf s.
+This choice of $E_\alpha$ is not the same as Davidson's, but it simpler to compute
+and still gives the same weight for all the values of $m_s$.
 
 Although the generation of all the determinants is extremely fast, using
-this approximation is quite expensive since it requires to compute
+this approximation can become expensive since it requires to compute
 all the $\mel{\beta}{\hat{H}}{\beta}$ for each $\ket{\alpha}$.
 To circumvent this problem, one can remark that for most of the contributions to
 \begin{equation}
@@ -387,7 +386,13 @@ all the contributions connected by $\hat{H}$ to $D_j$ will be shifted by
 E_\alpha & = \langle \hat{T}_{i\rightarrow j} \alpha | \hat{H} | \hat{T}_{i\rightarrow j} \alpha \rangle - \langle \alpha | \hat{H} | \alpha \rangle \\
          & \approx \langle D_j | \hat{H} | D_j \rangle - \langle D_i | \hat{H} | D_i \rangle  = E_j
 \end{align}
-Hence, the shifts $E_j$ can be precomputed, and applied at no cost.
+Hence, the shifts $E_j$ can be precomputed.
+If $\ket{\alpha}$ can be is connected to multiple $D_i$, we take the energy shift
+associated with the $D_i$ with largest associated $|c_i|$.
+As our PT2 implementation generates the $\ket{alpha}$ with no duplicates 
+from the $D_i$ sorted by decreasing $|c_i|$, the application of the shift can be
+made at no cost.
+
 
 
 
@@ -398,19 +403,19 @@ Hence, the shifts $E_j$ can be precomputed, and applied at no cost.
 
 
 %--------------------------------------------
-\subsection{Open-shell system}
+\subsection{Open-shell toy problem}
 %--------------------------------------------
 
 To test our implementation with a large number of open shells, we have prepared
 model wave functions for the dissociated Chromium dimer in its 13-et state, separated by a
-distance of $100~\AA$, using the def2-SVP basis.\cite{Weigend_2005}
+distance of $100$~\AA, using the def2-SVP basis.\cite{Weigend_2005}
 At such a large distance, each Chromium atom is in its high-spin state with $6$
 unpaired electrons. Two equivalent wave functions are built to initialize the sCI
 calculation:
 \begin{itemize}
 \item The $m_s=6$ wave function, which is a single determinant with $30$ $\up$
       and $18$ $\dn$ electrons.
-\item The $m_s=0$ 13-et wave function with $24$ $\up$ and $24$ $\dn$ electrons, which
+\item The 13-et $m_s=0$ wave function with $24$ $\up$ and $24$ $\dn$ electrons, which
       contains 924 determinants
 \end{itemize}
 The system is composed of $62$ molecular orbitals, so for this simple case $\Nint=1$.
@@ -418,21 +423,70 @@ The orbitals were obtained at the restricted open-shell Hartree-Fock (ROHF) leve
 for $m_s=6$.
 The selection is performed in the valence Full-CI space, with $20$ frozen electrons.
 
+The $m_s=0$ wave function was initialized by taking the same {\sop} as the
+one of the single determinant of the $m_s=6$ wave function, and generating all
+the possible determinants using the algorithm presented in the previous
+section.  The generation of the $924$ determinants was done in $\sim 19~200$
+CPU cycles ($\sim8$ microseconds), i.e.  $21$~cycles per generated determinant. The Hamiltonian was
+diagonalized and we checked that the lowest state with $\langle \stwo \rangle =
+42$ had the exact same energy as the $m_s=6$ single determinant.
 
-%E(ROHF,ms=6) = -2086.393627426404
-%E(ROHF,ms=0) = -2086.393627426463
+\begin{figure}
+\includegraphics[width=0.9\columnwidth]{e_var_ndet}
+\caption{Variational energy of dissociated Cr$_2$ as a function of the number of
+selected Slater determinants in the wave function expansion.}
+\label{fig:e_var_ndet}
+\end{figure}
 
-The $m_s=0$ wave function was initialized by taking the {\sop} of the single determinant
-of the $m_s=6$ wave function, and generating all the possible determinants using 
-the algorithm presented in the previous section.
-The generation of the $924$ determinants was done in $\sim 19~200$ CPU cycles,
-i.e. $21$~cycles per generated determinant. The Hamiltonian was diagonalized and
-we checked that the lowest state with $\langle \stwo \rangle = 42$ had the exact
-same energy as the $m_s=6$ single determinant.
+\begin{figure}
+\includegraphics[width=0.9\columnwidth]{e_var_nsop}
+\caption{Variational energy of dissociated Cr$_2$ as a function of the number of
+selected \sop{}.}
+\label{fig:e_var_nsop}
+\end{figure}
+
+\begin{figure}
+\includegraphics[width=0.9\columnwidth]{e_pt2_nsop}
+\caption{Variational energy with second order perturbative correction of
+dissociated Cr$_2$ as a function of the number of selected \sop{}, using
+the EN denominators or the shifted EN denominators.}
+\label{fig:e_pt2_nsop}
+\end{figure}
+
+For the $m_s=6$ wave function, we have run a CIPSI selection imposing or not the
+wave function to be spin-adapted. As expected, for the same energy the number of
+determinants is increased when spin adaptation is imposed. Then, we have run the
+CIPSI selection for the $m_s=0$ wave function imposing the
+spin adaptation. The convergence of the energy is plotted as a function of the
+number of determinants in Fig.~\ref{fig:e_var_ndet}, and as a function of
+the number of \sop{} in Fig.~\ref{fig:e_var_nsop}.
+From Fig.~\ref{fig:e_var_nsop}, it is striking that the $m_s=0$ and $m_s=6$
+wave functions are indeed equivalent. This example exhibits the fact that the
+number of determinants is not a relevant criterion for the quality of a wave
+function, but also that having a large number of determinants of small weights
+is not always exposing a multi-reference character. It is obvious that 
+working with \csf s is much more representative of the physics than working
+wit determinants.
+
+Fig.~\ref{fig:e_pt2_nsop} shows that the EN $\ept$ values are very different
+between $m_s=6$ and $m_s=0$ when the number of \sop{} is less than 1~000. The
+shifted EN and the EN values give almost identical energy curves for $m_s=6$.
+The tiny difference comes from the slightly different selection of determinants
+induced by the change of perturbation expression. On the contrary, the shifted EN
+corrects the wrong behavior of the curve for small numbers of \sop{}, and then
+the shifted EN and the EN curves join, before converging to the same curve as
+the $m_s=6$ curve. When the shifted EN and EN curves join, it is the sign
+that all the determinants of the external space with low energies were included
+in the internal space. Moreover, the $E$ term in the denominator becomes more
+negative as plotted in Fig.~\ref{fig:e_var_nsop}, so all the denominators tend to be large enough so that the correction becomes less and less important.
 
 
 %--------------------------------------------
-\subsection{Closed-shell system}
+\subsection{Dissociation curve of N$_2$}
+%--------------------------------------------
+
+%--------------------------------------------
+\subsection{Adiabatic excitation energy of Formaldehyde}
 %--------------------------------------------
 
 
@@ -450,8 +504,8 @@ operator when the Hamiltonian is diagonalized, in a negligible time.
 The authors gratefully acknowledge Sean Eron Anderson for creating the 
 \emph{Bit Twiddling Hacks} web page.
 This work was performed using HPC resources from CALMIP (Toulouse) under
-allocations 2018-0510 and 2018-18005 and from GENCI-TGCC (Grant
-2018-A0040801738).
+allocation 2018-0510 and from GENCI-TGCC (Grant 2018-A0040801738).
+KG acknowledges support from grant number CHE1762337 from the U.S. National Science Foundation.
 \end{acknowledgments}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
