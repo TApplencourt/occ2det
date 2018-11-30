@@ -125,7 +125,7 @@ set rrange [ * : * ] noreverse nowriteback
 set trange [ * : * ] noreverse nowriteback
 set urange [ * : * ] noreverse nowriteback
 set vrange [ * : * ] noreverse nowriteback
-set xlabel "Number of Slater determinants" 
+set xlabel "Number of Slater determinants"
 set xlabel  font "" textcolor lt -1 norotate
 set x2label "" 
 set x2label  font "" textcolor lt -1 norotate
@@ -171,5 +171,8 @@ set fit brief errorvariables nocovariancevariables errorscaling prescale nowrap 
 GNUTERM = "qt"
 x = 0.0
 ## Last datafile plotted: "data"
-plot 'data' index 3 u 1:5 w lp title "m_s=0, spin pure", 'data' index 0 u 1:5 w lp title "m_s=6, spin pure", 'data' index 2 u 1:5 w lp title "m_s=6, spin impure"
+plot \
+ 'data' index 4 u 1:5 w lp title "    spin adapted, m_s=0",\
+ 'data' index 1 u 1:5 w lp title "    spin adapted, m_s=6",\
+ 'data' index 2 u 1:5 w lp title "not spin adapted, m_s=6"
 #    EOF
