@@ -204,7 +204,6 @@ BEGIN_PROVIDER [ integer(bit_kind), gen_dets, (n_int,2,n_det) ]
     gen_dets(:,2,2) = gen_dets(:,1,1)
 
     do i=3,n_det,2
-
       ! Generate next permutation
       v_prev = v
       t = ior(v,v-1)
@@ -214,6 +213,7 @@ BEGIN_PROVIDER [ integer(bit_kind), gen_dets, (n_int,2,n_det) ]
       ! Find what has changed between v_prev and v
       diff = ieor(v,v_prev)
 
+      ! Initialize with previous determinant
       gen_dets(:,1,i) = gen_dets(:,1,i-2)
       gen_dets(:,2,i) = gen_dets(:,2,i-2)
 
@@ -247,7 +247,7 @@ BEGIN_PROVIDER [ integer(bit_kind), gen_dets, (n_int,2,n_det) ]
     enddo
 
     do k=n_alpha_in_single+1,n_single_orbital
-        gen_dets(iint(k),2,1) = ibset( gen_dets(iint(k),2,1), ipos(k) )
+      gen_dets(iint(k),2,1) = ibset( gen_dets(iint(k),2,1), ipos(k) )
     enddo
 
     do i=2,n_det
@@ -261,6 +261,7 @@ BEGIN_PROVIDER [ integer(bit_kind), gen_dets, (n_int,2,n_det) ]
       ! Find what has changed between v_prev and v
       diff = ieor(v,v_prev)
 
+      ! Initialize with previous determinant
       gen_dets(:,1,i) = gen_dets(:,1,i-1)
       gen_dets(:,2,i) = gen_dets(:,2,i-1)
 
