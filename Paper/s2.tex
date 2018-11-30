@@ -39,15 +39,13 @@
 
 \title{Enforcing spin-purity in determinant-based selected configuration interaction}
 
-% Kevin and Thomas : put the authors in the whatever order you prefer
-% Kevin : Is your affiliation correct?
 \author{Thomas Applencourt}
 \affiliation{Argonne Leadership Computing Facility, Argonne National Laboratory, Argonne, Illinois 60439 USA}
 \author{Kevin Gasperich}
 \affiliation{Computational Science Division, Argonne National Laboratory, Argonne, Illinois 60439 USA}
 \affiliation{Department of Chemistry, University of Pittsburgh, Pittsburgh, Pennsylvania 15260 USA}
 \author{Anthony Scemama}
-\affiliation{Laboratoire de Chimie et Physique Quantiques, Université de Toulouse, CNRS, UPS, France}
+\affiliation{Laboratoire de Chimie et Physique Quantiques, Universit\'e de Toulouse, CNRS, UPS, France}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
@@ -62,15 +60,15 @@
 \section{Introduction}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-In recent years, selected configuration interaction (sCI) methods have regained in
+In recent years, selected Configuration Interaction (sCI) methods have seen a resurgence in
 popularity,\cite{Greer_1998,Stampfuss_2005,Bytautas_2009,Booth_2009,Giner_2013,Buenker_2014,Holmes_2016,Ohtsuka_2017,Coe_2018}
 especially for the accurate calculation of electronic excitation
 energies.\cite{Coe_2013,Schriber_2017,Holmes_2017,Loos_2018,Scemama_2018,Dash_2018}
 A balanced description of excited states and accurate dissociation curves require
 the wave functions to be spin-pure, i.e. eigenfunctions of the $\stwo$
 operator. A natural option would be to reformulate sCI in terms of
-configuration state functions (\csf), but many codes were written in a
-determinant-based formulation and opting for the {\csf} formalism would require
+Configuration State Functions (\csf), but many codes were written in a
+determinant-based formulation, and opting for the {\csf} formalism would require
 a major re-writing of the software. Moreover, such a modification might
 increase the computational cost.\cite{Knowles_1984,Olsen_1988}
 
@@ -85,7 +83,7 @@ which would generate all the determinants of the corresponding \csf.
 Recently, Bytautas and Ruedenberg proposed a simple scheme to truncate large
 spin-pure wave functions while keeping the spin-purity.\cite{Bytautas_2007}
 By definition, all the determinants belonging to the same {\csf} have the same
-\emph{spatial occupation pattern} (\sop), so the
+\emph{Spatial Occupation Pattern} (\sop), so the
 coefficients of the determinants having the same {\sop}
 are summed together to produce the so-called \emph{space-product
 weights}, which are used to truncate the wave function. As spin coupling
@@ -103,8 +101,7 @@ Following this idea, imposing spin purity in sCI methods can be done by
 An efficient algorithm to achieve this procedure is presented in this letter,
 and then a modification to the Epstein-Nesbet perturbation expression is
 proposed to reduce the invariance bias with respect to the $m_s$ at no cost.
-All the proposed algorithms were implemented in the
-\emph{Quantum Package}.\cite{qp}
+All the proposed algorithms were implemented in the \emph{Quantum Package} software.\cite{qp}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -119,21 +116,18 @@ determinant,\cite{Pauncz_1989}
 \end{equation}
 the product of a determinant of
 $\up$ spinorbitals with a determinant of $\dn$ spinorbitals.
-Such a representation can be encoded as a pair of bit strings $(\md_i,\md_j)$.
-Within a bit string,
-each bit corresponds to a spinorbital and the bit is set to \one{} when the
-spinorbital is occupied. In low-level languages such as Fortran or C, a bit
+Such a representation can be encoded as a pair of bit strings $(\md_i,\md_j)$ of length $\Norb$,  $\Norb$ being the number of molecular orbitals.
+Within a bit string, each bit corresponds to a spinorbital where the bit is set to \one{} when the
+spinorbital is occupied and \zero{} when the spinorbital is empty. In low-level languages such as Fortran or C, a bit
 string may be stored as an array of $\Nint$ 64-bit integers, where 
 \begin{equation}
   \Nint = \left \lfloor \frac{\Norb-1}{64} \right \rfloor + 1,
 \end{equation}
-$\Norb$ being the number of molecular orbitals.
-This representation
-allows for efficient determinant comparisons using bit-wise operation 
-capabilities of modern processors,\cite{Scemama_2013} and will be convenient
-in the following.
 
-All the CPU cycle measurements were performed  on an Intel(R) Xeon(R)
+This representation allows for efficient determinant comparisons using bit-wise operation 
+capabilities of modern processors\cite{Scemama_2013} and will be convenient in the following.
+
+All the CPU cycle measurements were performed on an Intel(R) Xeon(R)
 Gold 6140 CPU @ 2.30GHz with the GNU Fortran compiler 7.3.0, by reading
 the time stamp counter of the CPU with the \texttt{rdtsc} instruction.
 
@@ -174,17 +168,18 @@ in linear time, if a hash value is associated with each \sop .\cite{Bitton_1983}
 \subsection{Generating all the determinants}
 %--------------------------------------------
 
-
 Given a {\sop}, one needs to generate all the possible excitations that can
 occur in the singly occupied molecular orbitals, keeping the numbers of $\up$
 and $\dn$ electrons fixed.
-All the generated determinants will only differ by the singly occupied orbitals,
+One can remark that all the generated determinants will only differ by the singly occupied orbitals,
 so from now on we will consider a more compact representation: a bit string of
 $n_\up + n_\dn$ bits, where $n_\up$ and $n_\dn$ denote the number of $\up$ and
 $\dn$ unpaired electrons. We keep the indices of the singly occupied orbitals
-in a vector $\mathbf{m}$ for later use.
-To encode a determinant, if the orbital is occupied by an $\up$ electron the
-corresponding bit will be set to \one{}, otherwise it will be set to \zero{}.
+in a look-up table $\mathbf{m}$ for later use.
+One can also remarks that in the intermediate representation of the determinants, $d\up$ is the oppositely of $d\dn$.
+
+%To encode a determinant, if the orbital is occupied by an $\up$ electron the
+%corresponding bit will be set to \one{}, otherwise it will be set to \zero{}.
 
 \begin{figure}[t]
 \begin{algorithmic}
@@ -250,7 +245,7 @@ To build a generated determinant $(\md_\up,\md_\dn)$ from a permutation $\tu$, o
 \begin{enumerate}
     \item Fill the doubly occupied orbitals by setting both $\md_\up$ and $\md_\dn$
           equal to $\mpp_I^{(2)}$
-    \item Iterate over the bits of $\tu$. If the $k$-bit is set to \one{}, set the $m_k$-th orbital of $d_\up$ to \one, otherwise set the $m_k$-th orbital of $d_\up$ to \one.
+    \item Iterate over the bits of $\tu$. If the $k$-bit is set to \one{}, set the $m_k$-th orbital of $d_\up$ to \one, otherwise set the $m_k$-th orbital of $d_\dn$ to \one.
 \end{enumerate}
 
 \subsection{Further optimizations}
@@ -426,7 +421,7 @@ The $m_s=0$ wave function was initialized by taking the same {\sop} as the
 one of the single determinant of the $m_s=6$ wave function, and generating all
 the possible determinants using the algorithm presented in the previous
 section.  The generation of the $924$ determinants was done in $\sim 19~200$
-CPU cycles, i.e.  $21$~cycles per generated determinant. The Hamiltonian was
+CPU cycles ($\sim8$ microseconds), i.e.  $21$~cycles per generated determinant. The Hamiltonian was
 diagonalized and we checked that the lowest state with $\langle \stwo \rangle =
 42$ had the exact same energy as the $m_s=6$ single determinant.
 
@@ -475,7 +470,7 @@ The authors gratefully acknowledge Sean Eron Anderson for creating the
 \emph{Bit Twiddling Hacks} web page.
 This work was performed using HPC resources from CALMIP (Toulouse) under
 allocations 2018-0510 and 2018-18005 and from GENCI-TGCC (Grant
-2018-A0040801738).
+2018-A0040801738). KG acknowledges support from grant number CHE1762337 from the U.S. National Science Foundation.
 \end{acknowledgments}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
