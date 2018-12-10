@@ -518,14 +518,15 @@ converged to the correct states.
 %--------------------------------------------
 
 The last example we present is the calculation of the adiabatic transition
-energy of the formaldehyde molecule with the aug-cc-pVDZ basis set.
-The ground state is well described by a single determinant, and the excited
-state is an open shell singlet obtained by a $^1(n \rightarrow \pi^*)$ single
-excitation, so its main {\csf} contains two determinants.
-The geometries of the ground and excited states were
-taken from Ref~\citep{Loos_2018}. For the ground state, a CIPSI calculation was
-run using natural orbitals obtained from a preliminary CIPSI run.
-For the excited state, a CIPSI selection was initiated using a wave function with
+energy of the formaldehyde molecule with the aug-cc-pVDZ basis set.  The ground
+state is well described by a single determinant, and the excited state is an
+open shell singlet obtained by a $^1(n \rightarrow \pi^*)$ single excitation,
+so its main {\csf} contains two determinants.  The geometries of the ground and
+excited states were taken from Ref~\citep{Loos_2018}. For both states, a
+preliminary CIPSI calculation was run to produce state-averaged natural
+orbitals, to produce molecular orbitals of comparable quality for both states.
+Then, for each state a single state CIPSI calculation was run.
+For the excited state, the run was initiated using a wave function with
 the two determinants of the reference \csf , and a state-following approach was
 used during the Davidson diagonalization to avoid collapsing to the ground state.
 
@@ -545,8 +546,9 @@ determinants and fixed numbers of \sop .}
 Figure~\ref{fig:formaldehyde} plots the adiabatic transition energy computed taking
 the energies of both states with the same number of selected determinants, and taking
 the energies of both states with the same number of \sop{}. This figure shows that
-the adiabatic transition energy converges much faster to the experimental
-value of 3.50~eV\cite{Clouthier_1983,Angeli_2005} using the \sop{} criterion.
+the adiabatic transition energy converges much faster to 3.53~eV using the
+\sop{} criterion, a value close to the experimental value of
+3.50~eV.\cite{Clouthier_1983,Angeli_2005}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusion}
@@ -554,7 +556,10 @@ value of 3.50~eV\cite{Clouthier_1983,Angeli_2005} using the \sop{} criterion.
 
 We have presented a general algorithm to complement an arbitrary wave function
 with all the required determinants to obtain eigenstates of the $\stwo$
-operator when the Hamiltonian is diagonalized, in a negligible time.
+operator when the Hamiltonian is diagonalized, in a negligible time. In
+addition, the presented examples have illustrated different situations where
+spin adaptation is important, and where considering the number space occupation
+patterns is more relevant than determinants.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

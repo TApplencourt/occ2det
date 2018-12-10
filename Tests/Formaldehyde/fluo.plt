@@ -169,5 +169,5 @@ set psdir
 set fit brief errorvariables nocovariancevariables errorscaling prescale nowrap v5
 GNUTERM = "qt"
 ## Last datafile plotted: "sop_pt2.dat"
-plot 'det_pt2.dat' u (10**($1)):(($5-$2)/0.0367502) w l title "Determinants", 'sop_pt2.dat' u (10**($1)):(($5-$2)/0.0367502) w l title "SOP", 3.53433668388 title "exFCI"
+plot 'det_pt2.dat' u (10**($1)):(($5-$2)/0.0367502) w l title "Determinants", 'sop_pt2.dat' u (10**($1)):(($5-$2)/0.0367502) w l title "SOP", 3.53 title "exFCI"
 #    EOF
