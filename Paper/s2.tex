@@ -514,9 +514,39 @@ ones. This curve also shows that all the points obtained with spin adaptation
 converged to the correct states.
 
 %--------------------------------------------
-\subsection{Adiabatic excitation energy of Formaldehyde}
+\subsection{Adiabatic transition energy of formaldehyde}
 %--------------------------------------------
 
+The last example we present is the calculation of the adiabatic transition
+energy of the formaldehyde molecule with the aug-cc-pVDZ basis set.
+The ground state is well described by a single determinant, and the excited
+state is an open shell singlet obtained by a $^1(n \rightarrow \pi^*)$ single
+excitation, so its main {\csf} contains two determinants.
+The geometries of the ground and excited states were
+taken from Ref~\citep{Loos_2018}. For the ground state, a CIPSI calculation was
+run using natural orbitals obtained from a preliminary CIPSI run.
+For the excited state, a CIPSI selection was initiated using a wave function with
+the two determinants of the reference \csf , and a state-following approach was
+used during the Davidson diagonalization to avoid collapsing to the ground state.
+
+Such a qualitative difference between the two states makes the computation of
+the energy difference inaccurate if the energy difference is calculated for the
+same number of selected determinants.  However, one can compute the energy
+difference for the same number of selected \sop, which is expected to be close
+to the same number of \csf s.
+
+\begin{figure}
+\includegraphics[width=0.9\columnwidth]{formaldehyde}
+\caption{Adiabatic transition energy of formaldehyde, computed with fixed numbers of 
+determinants and fixed numbers of \sop .}
+\label{fig:formaldehyde}
+\end{figure}
+
+Figure~\ref{fig:formaldehyde} plots the adiabatic transition energy computed taking
+the energies of both states with the same number of selected determinants, and taking
+the energies of both states with the same number of \sop{}. This figure shows that
+the adiabatic transition energy converges much faster to the experimental
+value of 3.50~eV\cite{Clouthier_1983,Angeli_2005} using the \sop{} criterion.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusion}
