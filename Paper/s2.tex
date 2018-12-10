@@ -482,8 +482,36 @@ negative as plotted in Fig.~\ref{fig:e_var_nsop}, so all the denominators tend t
 
 
 %--------------------------------------------
-\subsection{Dissociation curve of N$_2$}
+\subsection{Avoided crossing of LiF}
 %--------------------------------------------
+
+The avoided crossing between the ionic and neutral $^1\Sigma^+$ states of LiF is a 
+common benchmark for correlated methods, as the location of the crossing is highly
+sensitive to the amount of correlation. At large distances, the triplet state
+is very close in energy to the singlet states. If the wave function is not
+spin adapted, the triplet state can mix with the singlets during the selection
+and converging the CIPSI calculations on the correct states is not straightforward.
+
+\begin{figure}
+\includegraphics[width=0.9\columnwidth]{lif}
+\caption{Avoided crossing of LiF, with and without imposing spin adaptation.}
+\label{fig:lif}
+\end{figure}
+
+To show the importance of spin adaptation for such a problem, we have reported
+in Fig.~\ref{fig:lif} the potential energy curve of the two lowest states of
+LiF computed with our program with and without imposing spin adaptation.  The
+CIPSI calculations were run blindly (with no user interaction), starting with
+the CAS-SCF(2,2) wave functions of both states (four determinants). Only the
+lowest molecular orbital was frozen, corresponding to the $1s$ orbital of the
+Fluorine atom. The calculations were stopped when the second-order perturbative
+contribution was below $0.1$~m$E_h$ or when the number of determinants reached
+4 million.
+
+This figure shows that for large distances, without spin adaptation there are
+multiple erratic points for which the two obtained states are not the desired
+ones. This curve also shows that all the points obtained with spin adaptation
+converged to the correct states.
 
 %--------------------------------------------
 \subsection{Adiabatic excitation energy of Formaldehyde}
