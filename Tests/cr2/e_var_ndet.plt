@@ -135,7 +135,7 @@ set ylabel "E (au)"
 set ylabel  font "" textcolor lt -1 rotate by -270
 set y2label "" 
 set y2label  font "" textcolor lt -1 rotate by -270
-set yrange [ * : * ] noreverse nowriteback
+set yrange [ : -2086.2 ] noreverse nowriteback
 set y2range [ * : * ] noreverse nowriteback
 set zlabel "" 
 set zlabel  font "" textcolor lt -1 norotate
@@ -155,7 +155,6 @@ set lmargin  -1
 set bmargin  -1
 set rmargin  -1
 set tmargin  -1
-set locale "fr_FR.UTF-8"
 set pm3d explicit at s
 set pm3d scansautomatic
 set pm3d interpolate 1,1 flush begin noftriangles noborder corners2color mean
@@ -168,11 +167,14 @@ set loadpath
 set fontpath 
 set psdir
 set fit brief errorvariables nocovariancevariables errorscaling prescale nowrap v5
+#set key bottom
+#set key left
 GNUTERM = "qt"
 x = 0.0
 ## Last datafile plotted: "data"
 plot \
  'data' index 4 u 1:5 w lp title "    spin adapted, m_s=0",\
+ 'data' index 5 u 1:5 w lp title "not spin adapted, m_s=0",\
  'data' index 1 u 1:5 w lp title "    spin adapted, m_s=6",\
  'data' index 2 u 1:5 w lp title "not spin adapted, m_s=6"
 #    EOF
