@@ -50,6 +50,7 @@ interaction}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
+%TODO
 \end{abstract}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -65,7 +66,7 @@ In recent years, selected Configuration Interaction (sCI) methods have seen a re
 popularity,\cite{Greer_1998,Stampfuss_2005,Bytautas_2009,Booth_2009,Giner_2013,Buenker_2014,Holmes_2016,Ohtsuka_2017,Coe_2018}
 especially for the accurate calculation of electronic excitation
 energies.\cite{Coe_2013,Schriber_2017,Holmes_2017,Loos_2018,Scemama_2018,Dash_2018}
-A balanced description of excited states and accurate dissociation curves require
+A balanced description of excited states and dissociation curves require
 the wave functions to be spin adapted, i.e. eigenfunctions of the $\stwo$
 operator. A natural option would be to reformulate sCI in terms of
 Configuration State Functions (\csf), but many codes were written in a
@@ -76,15 +77,16 @@ increase the computational cost.\cite{Knowles_1984,Olsen_1988}
 In the context of heat-bath selection, Holmes \textit{et al} have 
 improved the spin purity of the wave functions by introducing ``time-reversal
 symmetry''\cite{Holmes_2017}, which consists in exchanging the spin labels of
-the electrons. 
+the electrons.
 However, when the number of open shells is large, time-reversal symmetry is not
 sufficient to generate all the required spin permutations among the open shells
 which would generate all the determinants of the corresponding \csf.
 
-Recently, Bytautas and Ruedenberg proposed a simple scheme to truncate large
-spin-adapted wave functions while keeping the spin adaptation.\cite{Bytautas_2007}
+A few years ago, Bytautas and Ruedenberg proposed a simple scheme to truncate
+large spin adapted wave functions while keeping the spin
+adaptation.\cite{Bytautas_2007}
 By definition, all the determinants belonging to the same {\csf} have the same
-\emph{Spatial Occupation Pattern} (\sop), so the
+\emph{Space Occupation Pattern} (\sop), so the
 coefficients of the determinants having the same {\sop}
 are summed together to produce the so-called \emph{space-product
 weights}, which are used to truncate the wave function. As spin coupling
@@ -101,8 +103,9 @@ Following this idea, imposing spin adaptation in sCI methods can be done by
 \end{enumerate}
 An efficient algorithm to achieve this procedure is presented in this letter,
 and then a modification to the Epstein-Nesbet perturbation expression is
-proposed to reduce the invariance bias with respect to the $m_s$ at no cost.
-All the proposed algorithms were implemented in the \emph{Quantum Package} software.\cite{qp}
+proposed to reduce the invariance bias with respect to $m_s$ at no cost.
+All the proposed algorithms were implemented in the \emph{Quantum Package}
+software.\cite{qp}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -549,6 +552,8 @@ the energies of both states with the same number of \sop{}. This figure shows th
 the adiabatic transition energy converges much faster to 3.53~eV using the
 \sop{} criterion, a value close to the experimental value of
 3.50~eV.\cite{Clouthier_1983,Angeli_2005}
+
+%TODO : montrer ndet/nsop
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusion}
