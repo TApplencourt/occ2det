@@ -101,8 +101,9 @@ Following this idea, imposing spin adaptation in sCI methods can be done by
 \end{enumerate}
 An efficient algorithm to achieve this procedure is presented in this letter,
 and then a modification to the Epstein-Nesbet perturbation expression is
-proposed to reduce the invariance bias with respect to the $m_s$ at no cost.
-All the proposed algorithms were implemented in the \emph{Quantum Package} software.\cite{qp}
+proposed to reduce the bias due to the lack of invariance with respect to 
+$m_s$ at no cost.  All the proposed algorithms were implemented in the
+\emph{Quantum Package} software.\cite{qp}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -162,7 +163,8 @@ where $\oplus$ denotes the \texttt{xor} operator and $\wedge$ denotes the
 \texttt{and} operator.
 
 Transforming all the determinants into a list of unique \sop s can be done
-in linear time, if a hash value is associated with each \sop .\cite{Bitton_1983}
+in linear time if a hash value is associated with each \sop
+.\cite{Bitton_1983} The time for this transformation is negligible.
 
 
 %--------------------------------------------
@@ -172,15 +174,16 @@ in linear time, if a hash value is associated with each \sop .\cite{Bitton_1983}
 Given a {\sop}, one needs to generate all the possible excitations that can
 occur in the singly occupied molecular orbitals, keeping the numbers of $\up$
 and $\dn$ electrons fixed.
-One can remark that all the generated determinants will only differ by the singly occupied orbitals,
-so from now on we will consider a more compact representation: a bit string of
-$n_\up + n_\dn$ bits, where $n_\up$ and $n_\dn$ denote the number of $\up$ and
-$\dn$ unpaired electrons. We keep the indices of the singly occupied orbitals
-in a look-up table $\mathbf{m}$ for later use.
-One can also remarks that in the intermediate representation of the determinants, $d\up$ is the oppositely of $d\dn$.
+One can remark that all the generated determinants will only differ by the
+singly occupied orbitals, so from now on we will consider a more compact
+representation: a bit string of
+$n_\up + n_\dn$ bits, where $n_\up$ and $n_\dn$ denote the numbers of $\up$ and
+$\dn$ unpaired electrons. The bit is set to $\one$ when the orbital is occupied
+by an $\up$ electron, and $\zero$ when it is occupied by a $\dn$ electron.
+The indices of the singly occupied orbitals are kept in a look-up table
+$\mathbf{m}$ for later use.
+%One can also remarks that in the intermediate representation of the determinants, $d_\up$ is the oppositely of $d_\dn$.
 
-%To encode a determinant, if the orbital is occupied by an $\up$ electron the
-%corresponding bit will be set to \one{}, otherwise it will be set to \zero{}.
 
 \begin{figure}[t]
 \begin{algorithmic}
@@ -220,11 +223,13 @@ This compact representation allows us to use Anderson's algorithm,\cite{NextBit}
 which generates all
 the patterns of $n_\up$ bits set to $1$ in a bit string of length $n_\up+n_\dn$
 in lexicographical order. For example, with $n_\up=2$ and $n_\dn=2$
-it generates \texttt{(0011, 0101, 0110, 1001, 1010, 1100)}.
+it generates the sequence \texttt{(0011, 0101, 0110, 1001, 1010, 1100)}.
 
-The bit string $\tu$ is initialized with the smallest possible unsigned integer with
-$n_\up$ bits set to \one, which is $2^{n_\up+1}-1$. Then, the
-following steps are iterated until $\tu$ becomes greater than $2^{n_\up+n_\dn}-1$:
+The algorithm proceeds as follows. The integer $\tu$ is initialized with
+$2^{n_\up+1}-1$, namely the smallest possible unsigned integer with $n_\up$
+bits set to \one. 
+Then, the following steps are iterated until $\tu$ becomes
+greater than $2^{n_\up+n_\dn}-1$:
 \begin{enumerate}
     \item Set all the least significant \zero{} bits of $\tu$ to \one{}, add \one{} and store the result in $\ttt$. The least significant \one{} of $\ttt$ marks the position in $\tu$ of the most significant \zero{} that should be changed into a \one{}.
     \item The position of the least significant \one{} of $\tu$ is identified by counting the number of trailing zeros in $\tu$. This \one{} should be changed into a \zero{}.
@@ -251,24 +256,25 @@ To build a generated determinant $(\md_\up,\md_\dn)$ from a permutation $\tu$, o
 
 \subsection{Further optimizations}
 
-As a first optimization, all the possible permutations can be generated
-iteratively by considering only what has changed between the previously
-generated determinant and the current one.
+As a first optimization, instead of creating each determinant from the
+permutation as shown in Fig.~\ref{fig:mapping}, all the determinants can be
+generated iteratively by considering only the orbitals that have changed
+from the previously generated determinant.
 The integer obtained by $\mathtt{v[k-1]} \oplus \mathtt{v[k]}$ has bits set at
 the positions where the bits differ between $\mathtt{v[k-1]}$ and
-$\mathtt{v[k]}$. The positions of these bits can be found by iteratively
+$\mathtt{v[k]}$. The positions of these bits can be found very fast by
+iteratively
 \begin{enumerate}
 \item counting the number of trailing zeros
 \item setting the least significant {\one} to {\zero} by setting
       $\mathtt{v[k] \gets v \wedge (v-1)}$
 \end{enumerate}
-until $v[k] = 0$. Hence, a determinant can be generated from the previous
-one in the sequence with less computational effort.
+until $v[k] = 0$. 
 
 A second optimization is to consider time-reversal symmetry. When $n_\up =
 n_\dn$, one can remark that $\mathtt{v[}2^{n_\up+n_\dn}-1-\mathtt{k]} = \neg \mathtt{v[k]}$.
 Hence, it suffices to iterate over the half of the permutations of Anderson's
-algorithm, and then generate the symmetric determinants.
+algorithm, and generate two determinants per iteration.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -291,7 +297,7 @@ Inserting the resolution of the identity for $\hat{H}^2$,
 \sigma^2 = \sum_{\alpha \in \text{FCI}} \mel{\Psi}{\hat{H}}{\alpha} \mel{\alpha}{\hat{H}}{\Psi} - E^2
 \label{eq:ri}
 \end{equation}
-where $\text{FCI}$ denotes a complete set of are arbitrary orthonormal basis
+where $\text{FCI}$ denotes a complete set of arbitrary orthonormal basis
 functions, $\ket{\alpha}$, spanning the Full Configuration Interaction (FCI)
 space.
 The FCI space can be split in three subspaces:
@@ -316,11 +322,11 @@ and as $\ket{\Psi}$ is normalized, one obtains
 \sigma^2 = \sum_{\alpha \in \mathcal{E}} \mel{\Psi}{\hat{H}}{\alpha}\mel{\alpha}{\hat{H}}{\Psi}.
 \end{equation} 
 
-The variance of the energy is doesn't depend on the particular choice of the
+The variance of the energy doesn't depend on the particular choice of the
 functions $\ket{\alpha}$, as long as they constitute an orthonormal set of
 functions spanning the space $\mathcal{E}$. Moreover, the variance of the
 energy is the equal for degenerate wave functions with different quantum
-numbers $m_s$.  Hence, one can choose equivalently the $\ket{\alpha}$ to be
+numbers $m_s$.  Hence, one can choose equivalently the $\ket{\alpha}$'s to be
 Slater determinants or \csf s.
 
 The Epstein-Nesbet (EN) second-order perturbative contribution to the energy is given
@@ -332,7 +338,7 @@ by
 This equation can be seen as a weighted sum of the different terms involved in
 the expression of the variance. However, the weights differ depending on the
 choice of $\ket{\alpha}$. Also, when a basis of Slater determinants is chosen,
-this expression is not invariant with respect to the choice of $m_s$, which
+this expression is not invariant with respect to the choice of $m_s$, and this 
 is not desirable.
 
 A way to cure the invariance with respect to $m_s$ is to impose all the weights
@@ -340,58 +346,69 @@ to be the same for all the determinants belonging to the same \csf . But as
 the same determinant can appear in the expression of multiple \csf s, Davidson
 proposed to use a modified EN zeroth-order Hamiltonian formed from
 diagonal elements averaged over Slater determinants belonging to the same
-\sop{} . This was already implemented 20 years ago in the MELD
-sCI program,\cite{Davidson_1979,Kozlowski_1994} and also in 
-SCIEL.\cite{Sciel}
-This modified zeroth Hamiltonian implies that the weight is the same for all the
-determinants belonging to the same \sop , and one can instead insert a
-determinant-specific shift to the denominator 
+\sop . This idea was implemented 20 years ago in the MELD sCI
+program,\cite{Davidson_1979,Kozlowski_1994} and also in SCIEL.\cite{Sciel}
+
+This modified zeroth order Hamiltonian implies that the weight is the same for
+all the determinants belonging to the same \sop . This can be done by
+inserting a determinant-specific energy shift $\epsilon_\alpha$ to the
+diagonal element at the denominator 
 \begin{equation}
-\ept = \sum_{\alpha \in \mathcal{E}} \frac{\mel{\Psi}{\hat{H}}{\alpha}\mel{\alpha}{\hat{H}}{\Psi}}{E-\mel{\alpha}{\hat{H}}{\alpha}+\epsilon_\alpha}.
+\ept = \sum_{\alpha \in \mathcal{E}} \frac{\mel{\Psi}{\hat{H}}{\alpha}\mel{\alpha}{\hat{H}}{\Psi}}{E-\left(\mel{\alpha}{\hat{H}}{\alpha}+\epsilon_\alpha \right)}.
 \end{equation}
 with
 \begin{equation}
-\epsilon_\alpha = \mel{\alpha}{\hat{H}}{\alpha} - E_\alpha
+\epsilon_\alpha = E_\alpha - \mel{\alpha}{\hat{H}}{\alpha} 
 \end{equation}
 where the shift is chosen to be
 \begin{equation}
 E_\alpha = \min_{\beta \in \text{\sop}(\alpha)} \mel{\beta}{\hat{H}}{\beta}.
 \end{equation}
 This choice of $E_\alpha$ is not the same as Davidson's, but it simpler to compute
-and still gives the same weight for all the values of $m_s$.
-
+and gives the same weight for all the values of $m_s$.
 Although the generation of all the determinants is extremely fast, using
 this approximation can become expensive since it requires to compute
-all the $\mel{\beta}{\hat{H}}{\beta}$ for each $\ket{\alpha}$.
-To circumvent this problem, one can remark that for most of the contributions to
+all the diagonal elements $\mel{\beta}{\hat{H}}{\beta}$ for each
+$\ket{\alpha}$.
+
+To circumvent this problem, one can remark that for the majority of the
+contributions to
 \begin{equation}
- \langle \Psi | \hat{H} | \alpha \rangle = \sum_i c_i \langle D_i | \hat{H} | \alpha \rangle
+ \mel{\Psi}{\hat{H}}{\alpha} = \sum_i c_i \mel{D_i}{\hat{H}}{\alpha}
 \end{equation}
-$\ket{\alpha}$ is doubly excited with respect to $D_i$.
-For all the determinants $D_j$ belonging to the same \sop{} as $D_i$, one can
-define a double excitation operator
+$\ket{\alpha}$ is doubly excited with respect to $\ket{D_i}$.
+We now consider that $\ket{D_i}$ is the determinant with the lowest
+energy among all the determinants sharing the same \sop .
+For all the other determinants $\ket{D_j}$ belonging to the same \sop{}
+as $\ket{D_i}$ and doubly excited with respect to $\ket{D_i}$, one can define
+a double excitation operator
 \begin{equation}
-\hat{T}_{i\rightarrow j} D_i = D_j.
+\hat{T}_{i\rightarrow j} \ket{D_i} = \ket{D_j}.
 \end{equation}
-Remarking that
+Remarking that 
 \begin{equation}
-\langle \hat{T}_{i\rightarrow j} D_i | \hat{H} | \hat{T}_{i\rightarrow j} \alpha \rangle =
+\mel{\hat{T}_{i\rightarrow j} D_i}{\hat{H}}{\hat{T}_{i\rightarrow j} \alpha} 
 \begin{cases}
-\pm \langle D_i | \hat{H} | \alpha \rangle & \text{ if } \hat{T}_{i\rightarrow j} \ne 0 \\
+\pm \mel{D_i}{\hat{H}}{\alpha} & \text{ if } \hat{T}_{i\rightarrow j}\ket{\alpha} \ne 0 \\
 0 & \text{otherwise},
 \end{cases}
 \end{equation}
-all the contributions connected by $\hat{H}$ to $D_j$ will be shifted by 
-\begin{align}
-E_\alpha & = \langle \hat{T}_{i\rightarrow j} \alpha | \hat{H} | \hat{T}_{i\rightarrow j} \alpha \rangle - \langle \alpha | \hat{H} | \alpha \rangle \\
-         & \approx \langle D_j | \hat{H} | D_j \rangle - \langle D_i | \hat{H} | D_i \rangle  = E_j
-\end{align}
-Hence, the shifts $E_j$ can be precomputed.
-If $\ket{\alpha}$ can be is connected to multiple $D_i$, we take the energy shift
+the contributions connected by $\hat{H}$ to $\ket{D_j}$ are the
+$\hat{T}_{i\rightarrow j} \ket{\alpha}$ which have a diagonal element which
+will be shifted by 
+\begin{equation}
+E_\alpha = \langle \hat{T}_{i\rightarrow j} \alpha | \hat{H} | \hat{T}_{i\rightarrow j} \alpha \rangle - \langle \alpha | \hat{H} | \alpha \rangle
+\end{equation}
+This quantity may be approximated by
+\begin{equation}
+E_j = \langle D_j | \hat{H} | D_j \rangle - \langle D_i | \hat{H} | D_i \rangle,
+\end{equation}
+and the approximate shifts $E_j$ can be precomputed.
+If $\ket{\alpha}$ is connected to multiple $D_i$, we take the energy shift
 associated with the $D_i$ with largest associated $|c_i|$.
-As our PT2 implementation generates the $\ket{alpha}$ with no duplicates 
-from the $D_i$ sorted by decreasing $|c_i|$, the application of the shift can be
-made at no cost.
+As our implementation generates the $\ket{\alpha}$'s with no duplicates
+from the $D_i$ sorted by decreasing $|c_i|$, the use of the shift can
+be made at no cost.
 
 
 
@@ -425,8 +442,8 @@ The selection is performed in the valence Full-CI space, with $20$ frozen electr
 
 The $m_s=0$ wave function was initialized by taking the same {\sop} as the
 one of the single determinant of the $m_s=6$ wave function, and generating all
-the possible determinants using the algorithm presented in the previous
-section.  The generation of the $924$ determinants was done in $\sim 19~200$
+the possible determinants using the algorithm presented in this paper.
+The generation of the $924$ determinants was done in $\sim 19~200$
 CPU cycles ($\sim8$ microseconds), i.e.  $21$~cycles per generated determinant. The Hamiltonian was
 diagonalized and we checked that the lowest state with $\langle \stwo \rangle =
 42$ had the exact same energy as the $m_s=6$ single determinant.
