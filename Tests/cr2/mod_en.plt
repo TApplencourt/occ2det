@@ -155,7 +155,6 @@ set lmargin  -1
 set bmargin  -1
 set rmargin  -1
 set tmargin  -1
-set locale "fr_FR.UTF-8"
 set pm3d explicit at s
 set pm3d scansautomatic
 set pm3d interpolate 1,1 flush begin noftriangles noborder corners2color mean
@@ -171,5 +170,5 @@ set fit brief errorvariables nocovariancevariables errorscaling prescale nowrap 
 GNUTERM = "qt"
 x = 0.0
 ## Last datafile plotted: "data"
-replot 'data' index 0 u 2:3 w lp title "Modified EN, m_s=6", 'data' index 1 u 2:3 w lp title "Modified EN, m_s=0"
+plot 'data' index 0 u 2:3 w lp title "Modified EN, m_s=6", 'data' index 1 u 2:3 w lp title "Modified EN, m_s=0"
 #    EOF

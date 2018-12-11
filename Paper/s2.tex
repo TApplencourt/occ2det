@@ -50,6 +50,7 @@ interaction}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
+%TODO
 \end{abstract}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -65,7 +66,7 @@ In recent years, selected Configuration Interaction (sCI) methods have seen a re
 popularity,\cite{Greer_1998,Stampfuss_2005,Bytautas_2009,Booth_2009,Giner_2013,Buenker_2014,Holmes_2016,Ohtsuka_2017,Coe_2018}
 especially for the accurate calculation of electronic excitation
 energies.\cite{Coe_2013,Schriber_2017,Holmes_2017,Loos_2018,Scemama_2018,Dash_2018}
-A balanced description of excited states and accurate dissociation curves require
+A balanced description of excited states and dissociation curves require
 the wave functions to be spin adapted, i.e. eigenfunctions of the $\stwo$
 operator. A natural option would be to reformulate sCI in terms of
 Configuration State Functions (\csf), but many codes were written in a
@@ -76,15 +77,16 @@ increase the computational cost.\cite{Knowles_1984,Olsen_1988}
 In the context of heat-bath selection, Holmes \textit{et al} have 
 improved the spin purity of the wave functions by introducing ``time-reversal
 symmetry''\cite{Holmes_2017}, which consists in exchanging the spin labels of
-the electrons. 
+the electrons.
 However, when the number of open shells is large, time-reversal symmetry is not
 sufficient to generate all the required spin permutations among the open shells
 which would generate all the determinants of the corresponding \csf.
 
-Recently, Bytautas and Ruedenberg proposed a simple scheme to truncate large
-spin-adapted wave functions while keeping the spin adaptation.\cite{Bytautas_2007}
+A few years ago, Bytautas and Ruedenberg proposed a simple scheme to truncate
+large spin adapted wave functions while keeping the spin
+adaptation.\cite{Bytautas_2007}
 By definition, all the determinants belonging to the same {\csf} have the same
-\emph{Spatial Occupation Pattern} (\sop), so the
+\emph{Space Occupation Pattern} (\sop), so the
 coefficients of the determinants having the same {\sop}
 are summed together to produce the so-called \emph{space-product
 weights}, which are used to truncate the wave function. As spin coupling
@@ -102,7 +104,7 @@ Following this idea, imposing spin adaptation in sCI methods can be done by
 An efficient algorithm to achieve this procedure is presented in this letter,
 and then a modification to the Epstein-Nesbet perturbation expression is
 proposed to reduce the bias due to the lack of invariance with respect to 
-$m_s$ at no cost.  All the proposed algorithms were implemented in the
+$m_s$ at no cost.  All the presented algorithms were implemented in the
 \emph{Quantum Package} software.\cite{qp}
 
 
@@ -531,9 +533,43 @@ ones. This curve also shows that all the points obtained with spin adaptation
 converged to the correct states.
 
 %--------------------------------------------
-\subsection{Adiabatic excitation energy of Formaldehyde}
+\subsection{Adiabatic transition energy of formaldehyde}
 %--------------------------------------------
 
+The last example we present is the calculation of the adiabatic transition
+energy of the formaldehyde molecule with the aug-cc-pVDZ basis set.  The ground
+state is well described by a single determinant, and the excited state is an
+open shell singlet obtained by a $^1(n \rightarrow \pi^*)$ single excitation,
+so its main {\csf} contains two determinants.  The geometries of the ground and
+excited states were taken from Ref~\citep{Loos_2018}. For both states, a
+preliminary CIPSI calculation was run to produce state-averaged natural
+orbitals, to produce molecular orbitals of comparable quality for both states.
+Then, for each state a single state CIPSI calculation was run.
+For the excited state, the run was initiated using a wave function with
+the two determinants of the reference \csf , and a state-following approach was
+used during the Davidson diagonalization to avoid collapsing to the ground state.
+
+Such a qualitative difference between the two states makes the computation of
+the energy difference inaccurate if the energy difference is calculated for the
+same number of selected determinants.  However, one can compute the energy
+difference for the same number of selected \sop, which is expected to be close
+to the same number of \csf s.
+
+\begin{figure}
+\includegraphics[width=0.9\columnwidth]{formaldehyde}
+\caption{Adiabatic transition energy of formaldehyde, computed with fixed numbers of 
+determinants and fixed numbers of \sop .}
+\label{fig:formaldehyde}
+\end{figure}
+
+Figure~\ref{fig:formaldehyde} plots the adiabatic transition energy computed taking
+the energies of both states with the same number of selected determinants, and taking
+the energies of both states with the same number of \sop{}. This figure shows that
+the adiabatic transition energy converges much faster to 3.53~eV using the
+\sop{} criterion, a value close to the experimental value of
+3.50~eV.\cite{Clouthier_1983,Angeli_2005}
+
+%TODO : montrer ndet/nsop
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusion}
@@ -541,7 +577,10 @@ converged to the correct states.
 
 We have presented a general algorithm to complement an arbitrary wave function
 with all the required determinants to obtain eigenstates of the $\stwo$
-operator when the Hamiltonian is diagonalized, in a negligible time.
+operator when the Hamiltonian is diagonalized, in a negligible time. In
+addition, the presented examples have illustrated different situations where
+spin adaptation is important, and where considering the number space occupation
+patterns is more relevant than determinants.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
