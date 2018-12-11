@@ -50,7 +50,18 @@ interaction}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
-%TODO
+We present an algorithm which, given an arbitrary determinant space, generates
+all the missing determinants which will allow to obtain spin adapted
+wave functions while avoiding to work with configuration state functions.
+Although the idea to enforce spin adaptation in determinant-based
+calculations is not new, we propose an original algorithm for the generation
+of the determinants which is extremely efficient: generating all the possible
+determinants with 6 $\up$ and 6 $\dn$ electrons in 12 open shells took 21 CPU
+cycles per determinant. We also propose modification of the Epstein-Nesbet
+denominators which reduces significantly the non-invariance of the second
+order perturbative correction with respect to different $m_s$ values of the
+wave function, and the computational cost of this correction is also
+negligible.
 \end{abstract}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -480,24 +491,27 @@ spin adaptation. The convergence of the energy is plotted as a function of the
 number of determinants in Fig.~\ref{fig:e_var_ndet}, and as a function of
 the number of \sop{} in Fig.~\ref{fig:e_var_nsop}.
 From Fig.~\ref{fig:e_var_nsop}, it is striking that the $m_s=0$ and $m_s=6$
-wave functions are indeed equivalent. This example exhibits the fact that the
-number of determinants is not a relevant criterion for the quality of a wave
-function, but also that having a large number of determinants of small weights
-is not always exposing a multi-reference character. It is obvious that 
-working with \csf s is much more representative of the physics than working
-wit determinants.
+wave functions are indeed equivalent.
+This example exhibits the fact that having a large number of determinants with
+small weights is not always characteristic of a multi-reference character.
+Moreover, the number of determinants is not a relevant criterion for the
+quality of a wave function, as opposed to \csf s. However, using \sop s
+appears as a cheap alternative to \csf s when working in the determinant
+framework.
 
 Fig.~\ref{fig:e_pt2_nsop} shows that the EN $\ept$ values are very different
-between $m_s=6$ and $m_s=0$ when the number of \sop{} is less than 1~000. The
+between $m_s=6$ and $m_s=0$ when the number of \sop{} is less than 1000. The
 shifted EN and the EN values give almost identical energy curves for $m_s=6$.
-The tiny difference comes from the slightly different selection of determinants
-induced by the change of perturbation expression. On the contrary, the shifted EN
+%The tiny difference comes from the slightly different selection of determinants
+%induced by the change of perturbation expression.
+On the contrary, the shifted EN
 corrects the wrong behavior of the curve for small numbers of \sop{}, and then
 the shifted EN and the EN curves join, before converging to the same curve as
 the $m_s=6$ curve. When the shifted EN and EN curves join, it is the sign
 that all the determinants of the external space with low energies were included
-in the internal space. Moreover, the $E$ term in the denominator becomes more
-negative as plotted in Fig.~\ref{fig:e_var_nsop}, so all the denominators tend to be large enough so that the correction becomes less and less important.
+in the internal space. In addition, the $E$ term in the denominator becomes more
+negative as plotted in Fig.~\ref{fig:e_var_nsop}, so all the denominators tend to be large enough so that the use of the energetic shift becomes less and
+less important.
 
 
 %--------------------------------------------
@@ -506,10 +520,10 @@ negative as plotted in Fig.~\ref{fig:e_var_nsop}, so all the denominators tend t
 
 The avoided crossing between the ionic and neutral $^1\Sigma^+$ states of LiF is a 
 common benchmark for correlated methods, as the location of the crossing is highly
-sensitive to the amount of correlation. At large distances, the triplet state
+sensitive to the amount of correlation. At large distances, the lowest triplet state
 is very close in energy to the singlet states. If the wave function is not
-spin adapted, the triplet state can mix with the singlets during the selection
-and converging the CIPSI calculations on the correct states is not straightforward.
+spin adapted, the triplet state will mix with the singlets during the selection
+and the convergence of the CIPSI calculations to the correct states is not guaranteed.
 
 \begin{figure}
 \includegraphics[width=0.9\columnwidth]{lif}
@@ -519,18 +533,18 @@ and converging the CIPSI calculations on the correct states is not straightforwa
 
 To show the importance of spin adaptation for such a problem, we have reported
 in Fig.~\ref{fig:lif} the potential energy curve of the two lowest states of
-LiF computed with our program with and without imposing spin adaptation.  The
-CIPSI calculations were run blindly (with no user interaction), starting with
-the CAS-SCF(2,2) wave functions of both states (four determinants). Only the
-lowest molecular orbital was frozen, corresponding to the $1s$ orbital of the
-Fluorine atom. The calculations were stopped when the second-order perturbative
-contribution was below $0.1$~m$E_h$ or when the number of determinants reached
-4 million.
+LiF computed with and without imposing spin adaptation. For all the distances,
+the CIPSI calculations were run blindly (with no user interaction), starting
+with the CAS-SCF(2,2)/aug-cc-pVDZ  wave functions of both states (four
+determinants). Only the lowest molecular orbital was frozen, corresponding to
+the $1s$ orbital of the Fluorine atom. The calculations were stopped when the
+second-order perturbative contribution was below $0.1$~m$E_h$ or when the
+number of determinants reached 4 million.
 
-This figure shows that for large distances, without spin adaptation there are
-multiple erratic points for which the two obtained states are not the desired
-ones. This curve also shows that all the points obtained with spin adaptation
-converged to the correct states.
+Fig.~\ref{fig:lif} shows that for large distances, without spin adaptation
+there are multiple erratic points for which the two obtained states are not
+the desired ones. This curve also shows that all the points obtained with spin
+adaptation converged to the correct states.
 
 %--------------------------------------------
 \subsection{Adiabatic transition energy of formaldehyde}
@@ -541,19 +555,27 @@ energy of the formaldehyde molecule with the aug-cc-pVDZ basis set.  The ground
 state is well described by a single determinant, and the excited state is an
 open shell singlet obtained by a $^1(n \rightarrow \pi^*)$ single excitation,
 so its main {\csf} contains two determinants.  The geometries of the ground and
-excited states were taken from Ref~\citep{Loos_2018}. For both states, a
+excited states were taken from Ref~\citep{Loos_2018}. For both geometries, a
 preliminary CIPSI calculation was run to produce state-averaged natural
-orbitals, to produce molecular orbitals of comparable quality for both states.
-Then, for each state a single state CIPSI calculation was run.
+orbitals, in order to produce molecular orbitals of comparable quality for
+both states. Hence, the rate of convergence of the energy with respect to the
+number of selected \csf s is expected to be comparable for both states.
+However, we expect the rate of convergence of the energy with respect to the
+number of selected determinants to be different. 
+
+For each state a state-specific CIPSI calculation was run at its equilibrium
+geometry.
 For the excited state, the run was initiated using a wave function with
 the two determinants of the reference \csf , and a state-following approach was
 used during the Davidson diagonalization to avoid collapsing to the ground state.
 
-Such a qualitative difference between the two states makes the computation of
-the energy difference inaccurate if the energy difference is calculated for the
-same number of selected determinants.  However, one can compute the energy
-difference for the same number of selected \sop, which is expected to be close
-to the same number of \csf s.
+The qualitative difference between the two states (single determinant
+\textit{vs} open-shell singlet) makes the computation of
+the energy difference inaccurate if the energy difference is calculated for
+the same number of selected determinants. 
+However, one can compute the energy difference for the same number of selected
+\sop, which is expected to be consistent with the use of the same number of
+\csf s.
 
 \begin{figure}
 \includegraphics[width=0.9\columnwidth]{formaldehyde}
@@ -562,12 +584,16 @@ determinants and fixed numbers of \sop .}
 \label{fig:formaldehyde}
 \end{figure}
 
-Figure~\ref{fig:formaldehyde} plots the adiabatic transition energy computed taking
-the energies of both states with the same number of selected determinants, and taking
-the energies of both states with the same number of \sop{}. This figure shows that
-the adiabatic transition energy converges much faster to 3.53~eV using the
-\sop{} criterion, a value close to the experimental value of
-3.50~eV.\cite{Clouthier_1983,Angeli_2005}
+Figure~\ref{fig:formaldehyde} plots the adiabatic transition energy computed
+taking the energies of both states with the same number of selected
+determinants, and taking the energies of both states with the same number of
+\sop{}.
+As the two runs were independent, the number of selected determinants and
+\sop s were different for the two states so a cubic spline interpolation
+was used to compute the energies at arbitrary numbers of determinants.
+This figure shows that the adiabatic transition energy converges much
+faster to 3.53~eV using the \sop{} criterion, a value close to the
+experimental value of 3.50~eV.\cite{Clouthier_1983,Angeli_2005}
 
 %TODO : montrer ndet/nsop
 
@@ -577,10 +603,17 @@ the adiabatic transition energy converges much faster to 3.53~eV using the
 
 We have presented a general algorithm to complement an arbitrary wave function
 with all the required determinants to obtain eigenstates of the $\stwo$
-operator when the Hamiltonian is diagonalized, in a negligible time. In
-addition, the presented examples have illustrated different situations where
-spin adaptation is important, and where considering the number space occupation
-patterns is more relevant than determinants.
+operator when the Hamiltonian is diagonalized, in a negligible time.
+This spin adaptation is done after the selection of determinants in the
+selected CI algorithm.
+The presented examples have illustrated different situations where
+spin adaptation is important.  When comparing wave functions, considering the
+number of \csf s is more relevant than the number of determinants and
+considering \sop s allows to stay in the determinant framework while still
+benefiting from the consistence brought by \csf s.
+Finally, we would like to emphasize that this spin adaptation procedure can be
+applied to any selected CI method : Heat-Bath CI, Machine Learning CI, Monte
+Carlo CI, \textit{etc}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
