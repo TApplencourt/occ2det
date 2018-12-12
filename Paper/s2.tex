@@ -51,21 +51,21 @@ interaction}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
 We present an algorithm which, given an arbitrary determinant space, generates
-all the missing determinants which will allow one to obtain spin adapted
-wave functions while avoiding working with configuration state functions.
-Although the idea to enforce spin adaptation in determinant-based
-calculations is not new, we propose an original algorithm for the generation
-of the determinants which is extremely efficient: generating all the possible
-determinants with 6 $\up$ and 6 $\dn$ electrons in 12 open shells took 21 CPU
-cycles per determinant. We also propose modification of the Epstein-Nesbet
-denominators which reduces significantly the non-invariance of the second
-order perturbative correction with respect to different $m_s$ values of the
-wave function, and the computational cost of this correction is also
-negligible.
+all the missing determinants allowing one to obtain spin adapted wave
+functions while avoiding working with configuration state functions.  Although
+the idea to enforce spin adaptation in determinant-based calculations is not
+new, we propose an original algorithm for the generation of the Slater
+determinants which is extremely efficient: generating all the possible
+determinants with 6 $\up$-spin and 6 $\dn$-spin electrons in 12 open shells
+took 21 CPU cycles per generated Slater determinant. We also propose a
+modification of the denominators in the Epstein-Nesbet perturbation theory
+reducing significantly the non-invariance of the second order correction with
+respect to different values of the spin quantum number $m_s$.  The
+computational cost of this correction is also negligible.
 \end{abstract}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\keywords{Selected Configuration Interaction ; Spin adaptation}
+\keywords{Selected Configuration Interaction ; Spin adaptation ; Epstein-Nesbet perturbation theory}
 
 \maketitle
 
@@ -115,8 +115,9 @@ Following this idea, imposing spin adaptation in sCI methods can be done by
 An efficient algorithm to achieve this procedure is presented in this letter,
 and then a modification to the Epstein-Nesbet perturbation expression is
 proposed to reduce the bias due to the lack of invariance with respect to 
-$m_s$ at no cost.  All the presented algorithms were implemented in the
-\emph{Quantum Package} software.\cite{qp}
+the spin quantum number $m_s$ at no cost.
+All the presented algorithms were implemented in the \emph{Quantum Package}
+software.\cite{qp}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -300,7 +301,8 @@ algorithm, and generate two determinants per iteration.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-Let us consider a normalized spin-adapted wave function with energy $E$, expressed as
+Let us consider a real-valued normalized spin-adapted wave function with
+energy $E$, expressed as
 \begin{equation}
 \ket{\Psi} = \sum_{i \in \mathcal{I}} c_i \ket{D_i}
 \end{equation}
@@ -310,26 +312,28 @@ The variance of the energy associated with this function is
 \begin{equation}
 \sigma^2 = \mel{\Psi}{\hat{H}^2}{\Psi} - \mel{\Psi}{\hat{H}}{\Psi}^2 .
 \end{equation}
-Inserting the resolution of the identity for $\hat{H}^2$, 
+Inserting the resolution of the identity for $\hat{H}^2$ gives an
+approximation of the variance truncated to the Full Configuration Interaction
+(FCI) space, 
 \begin{equation}
 \sigma^2 = \sum_{\alpha \in \text{FCI}} \mel{\Psi}{\hat{H}}{\alpha} \mel{\alpha}{\hat{H}}{\Psi} - E^2
 \label{eq:ri}
 \end{equation}
 where $\text{FCI}$ denotes a complete set of arbitrary orthonormal basis
-functions, $\ket{\alpha}$, spanning the Full Configuration Interaction (FCI)
-space.
+functions, $\ket{\alpha}$, spanning the FCI space.
 The FCI space can be split in three subspaces:
 \begin{itemize}
 \item The internal space $\mathcal{I}$
-\item The external space $\mathcal{E}$ which is the subset of $\ket{\alpha}$ which
-      don't belong to $\mathcal{I}$, and for which $\mel{\Psi}{\hat{H}}{\alpha}
-      \ne 0$
+\item The external space $\mathcal{E}$ which is the subset of functions
+      $\ket{\alpha}$ which don't belong to $\mathcal{I}$, and for which
+      $\mel{\alpha}{\hat{H}}{\Psi} \ne 0$
 \item The rest of the FCI space.
 \end{itemize}
-$\hat{H}$ is symmetric, so Eq.~\eqref{eq:ri} can be re-written as
+$\hat{H}$ is symmetric and $\ket{\Psi}$ is real, so Eq.~\eqref{eq:ri} can be
+re-written as
 \begin{equation}
 \sigma^2 = \sum_{D_i    \in \mathcal{I}} \mel{D_i}{\hat{H}}{\Psi}^2 
-         + \sum_{\alpha \in \mathcal{E}} \mel{\Psi}{\hat{H}}{\alpha} \mel{\alpha}{\hat{H}}{\Psi} - E^2.
+         + \sum_{\alpha \in \mathcal{E}} \mel{\alpha}{\hat{H}}{\Psi}^2 - E^2.
 \end{equation}
 As $\ket{\Psi}$ is an eigenfunction of $\hat{H}$ projected in $\mathcal{I}$, 
 \begin{equation}
@@ -337,20 +341,20 @@ As $\ket{\Psi}$ is an eigenfunction of $\hat{H}$ projected in $\mathcal{I}$,
 \end{equation}
 and as $\ket{\Psi}$ is normalized, one obtains
 \begin{equation}
-\sigma^2 = \sum_{\alpha \in \mathcal{E}} \mel{\Psi}{\hat{H}}{\alpha}\mel{\alpha}{\hat{H}}{\Psi}.
+\sigma^2 = \sum_{\alpha \in \mathcal{E}} \mel{\alpha}{\hat{H}}{\Psi}^2.
 \end{equation} 
 
 The variance of the energy doesn't depend on the particular choice of the
 functions $\ket{\alpha}$, as long as they constitute an orthonormal set of
 functions spanning the space $\mathcal{E}$. Moreover, the variance of the
-energy is equal for degenerate wave functions with different quantum
+energy is equal for degenerate wave functions with different spin quantum
 numbers $m_s$.  Hence, one can choose equivalently the $\ket{\alpha}$'s to be
 Slater determinants or \csf s.
 
 The Epstein-Nesbet (EN) second-order perturbative contribution to the energy is given
 by
 \begin{equation}
-\ept = \sum_{\alpha \in \mathcal{E}} \frac{\mel{\Psi}{\hat{H}}{\alpha}\mel{\alpha}{\hat{H}}{\Psi}}{E-\mel{\alpha}{\hat{H}}{\alpha}}.
+\ept = \sum_{\alpha \in \mathcal{E}} \frac{\mel{\alpha}{\hat{H}}{\Psi}^2}{E-\mel{\alpha}{\hat{H}}{\alpha}}.
 \label{eq:pt2}
 \end{equation}
 This equation can be seen as a weighted sum of the different terms involved in
@@ -372,7 +376,7 @@ all the determinants belonging to the same \sop . This can be done by
 inserting a determinant-specific energy shift $\epsilon_\alpha$ to the
 diagonal element at the denominator 
 \begin{equation}
-\ept = \sum_{\alpha \in \mathcal{E}} \frac{\mel{\Psi}{\hat{H}}{\alpha}\mel{\alpha}{\hat{H}}{\Psi}}{E-\left(\mel{\alpha}{\hat{H}}{\alpha}+\epsilon_\alpha \right)}.
+\ept = \sum_{\alpha \in \mathcal{E}} \frac{\mel{\alpha}{\hat{H}}{\Psi}^2}{E-\left(\mel{\alpha}{\hat{H}}{\alpha}+\epsilon_\alpha \right)}.
 \end{equation}
 with
 \begin{equation}
@@ -392,7 +396,7 @@ $\ket{\alpha}$.
 To circumvent this problem, one can remark that for the majority of the
 contributions to
 \begin{equation}
- \mel{\Psi}{\hat{H}}{\alpha} = \sum_i c_i \mel{D_i}{\hat{H}}{\alpha}
+ \mel{\alpha}{\hat{H}}{\Psi} = \sum_i c_i \mel{\alpha}{\hat{H}}{D_i}
 \end{equation}
 $\ket{\alpha}$ is doubly excited with respect to $\ket{D_i}$.
 We now consider that $\ket{D_i}$ is the determinant with the lowest
@@ -407,7 +411,7 @@ Remarking that
 \begin{equation}
 \mel{\hat{T}_{i\rightarrow j} D_i}{\hat{H}}{\hat{T}_{i\rightarrow j} \alpha} 
 \begin{cases}
-\pm \mel{D_i}{\hat{H}}{\alpha} & \text{ if } \hat{T}_{i\rightarrow j}\ket{\alpha} \ne 0 \\
+\pm \mel{\alpha}{\hat{H}}{D_i} & \text{ if } \hat{T}_{i\rightarrow j}\ket{\alpha} \ne 0 \\
 0 & \text{otherwise},
 \end{cases}
 \end{equation}
@@ -422,11 +426,11 @@ This quantity may be approximated by
 E_j = \langle D_j | \hat{H} | D_j \rangle - \langle D_i | \hat{H} | D_i \rangle,
 \end{equation}
 and the approximate shifts $E_j$ can be precomputed.
-If $\ket{\alpha}$ is connected to multiple $D_i$, we take the energy shift
-associated with the $D_i$ with largest associated $|c_i|$.
-As our implementation generates the $\ket{\alpha}$'s with no duplicates
-from the $D_i$ sorted by decreasing $|c_i|$, the use of the shift can
-be made at no cost.
+If $\ket{\alpha}$ is connected to multiple $\ket{D_i}$, we take the energy
+shift associated with the $\ket{D_i}$ with largest associated $|c_i|$.  As our
+implementation generates the $\ket{\alpha}$'s with no duplicates from the
+$\ket{D_i}$ sorted by decreasing $|c_i|$, the use of the shift can be made at
+no cost.
 
 
 
@@ -607,13 +611,13 @@ experimental value of 3.50~eV.\cite{Clouthier_1983,Angeli_2005}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 We have presented a general algorithm to complement an arbitrary wave function
-with all the required determinants to obtain eigenstates of the $\stwo$
-operator when the Hamiltonian is diagonalized, in a negligible time.
-This spin adaptation is done after the selection of determinants in the
-selected CI algorithm.
+with all the required Slater determinants to obtain eigenstates of the $\stwo$
+operator when the Hamiltonian is diagonalized, in a negligible time.  This
+spin adaptation is done after the selection of determinants in the selected CI
+algorithm.
 The presented examples have illustrated different situations where
 spin adaptation is important.  When comparing wave functions, considering the
-number of \csf s is more relevant than the number of determinants and
+number of \csf s is more relevant than the number of Slater determinants and
 considering \sop s allows to stay in the determinant framework while still
 benefiting from the consistence brought by \csf s.
 Finally, we would like to emphasize that this spin adaptation procedure can be
