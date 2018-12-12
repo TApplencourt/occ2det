@@ -51,8 +51,8 @@ interaction}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
 We present an algorithm which, given an arbitrary determinant space, generates
-all the missing determinants which will allow to obtain spin adapted
-wave functions while avoiding to work with configuration state functions.
+all the missing determinants which will allow one to obtain spin adapted
+wave functions while avoiding working with configuration state functions.
 Although the idea to enforce spin adaptation in determinant-based
 calculations is not new, we propose an original algorithm for the generation
 of the determinants which is extremely efficient: generating all the possible
@@ -77,7 +77,7 @@ In recent years, selected Configuration Interaction (sCI) methods have seen a re
 popularity,\cite{Greer_1998,Stampfuss_2005,Bytautas_2009,Booth_2009,Giner_2013,Buenker_2014,Holmes_2016,Ohtsuka_2017,Coe_2018}
 especially for the accurate calculation of electronic excitation
 energies.\cite{Coe_2013,Schriber_2017,Holmes_2017,Loos_2018,Scemama_2018,Dash_2018}
-A balanced description of excited states and dissociation curves require
+Balanced descriptions of excited states and dissociation curves require
 the wave functions to be spin adapted, i.e. eigenfunctions of the $\stwo$
 operator. A natural option would be to reformulate sCI in terms of
 Configuration State Functions (\csf), but many codes were written in a
@@ -246,7 +246,7 @@ greater than $2^{n_\up+n_\dn}-1$:
 \begin{enumerate}
     \item Set all the least significant \zero{} bits of $\tu$ to \one{}, add \one{} and store the result in $\ttt$. The least significant \one{} of $\ttt$ marks the position in $\tu$ of the most significant \zero{} that should be changed into a \one{}.
     \item The position of the least significant \one{} of $\tu$ is identified by counting the number of trailing zeros in $\tu$. This \one{} should be changed into a \zero{}.
-    \item At the right of this position, the least significant \zero's should be changed in \one's such that the total number of \one's is the same as in $\tu$.
+    \item At the right of this position, the least significant \zero's should be changed to \one's such that the total number of \one's is the same as in $\tu$.
 \end{enumerate}
 The corresponding pseudo-code is presented in Fig.~\ref{fig:algo}. On average, one loop cycle executes in only $8.2$~CPU cycles.
 
@@ -275,8 +275,8 @@ generated iteratively by considering only the orbitals that have changed
 from the previously generated determinant.
 The integer obtained by $\mathtt{v[k-1]} \oplus \mathtt{v[k]}$ has bits set at
 the positions where the bits differ between $\mathtt{v[k-1]}$ and
-$\mathtt{v[k]}$. The positions of these bits can be found very fast by
-iteratively
+$\mathtt{v[k]}$. The positions of these bits can be found in a few cycles by
+iteratively:
 \begin{enumerate}
 \item counting the number of trailing zeros
 \item setting the least significant {\one} to {\zero} by setting
@@ -285,8 +285,13 @@ iteratively
 until $v[k] = 0$. 
 
 A second optimization is to consider time-reversal symmetry. When $n_\up =
-n_\dn$, one can remark that $\mathtt{v[}2^{n_\up+n_\dn}-1-\mathtt{k]} = \neg \mathtt{v[k]}$.
-Hence, it suffices to iterate over the half of the permutations of Anderson's
+n_\dn$, one can remark that ${\mathtt{v[n_{det}}-1-\mathtt{k]} = \neg \mathtt{v[k]}}$, 
+where $\mathtt{n_{det}}$ is the number of determinants
+\begin{equation}
+\mathtt{n_{det}} = \frac{(n_\up +n_\dn)!}{n_\up! n_\dn!}
+\end{equation}
+%$\mathtt{v[}2^{n_\up+n_\dn}-1-\mathtt{k]} = \neg \mathtt{v[k]}$.
+Hence, it suffices to iterate over the first half of the permutations of Anderson's
 algorithm, and generate two determinants per iteration.
 
 
@@ -323,12 +328,12 @@ The FCI space can be split in three subspaces:
 \end{itemize}
 $\hat{H}$ is symmetric, so Eq.~\eqref{eq:ri} can be re-written as
 \begin{equation}
-\sigma^2 = \sum_{D_I    \in \mathcal{I}} \mel{D_I}{\hat{H}}{\Psi}^2 
+\sigma^2 = \sum_{D_i    \in \mathcal{I}} \mel{D_i}{\hat{H}}{\Psi}^2 
          + \sum_{\alpha \in \mathcal{E}} \mel{\Psi}{\hat{H}}{\alpha} \mel{\alpha}{\hat{H}}{\Psi} - E^2.
 \end{equation}
 As $\ket{\Psi}$ is an eigenfunction of $\hat{H}$ projected in $\mathcal{I}$, 
 \begin{equation}
-\mel{D_I}{\hat{H}}{\Psi}^2 = \left( E\, \langle D_I | \Psi \rangle \right)^2 = E^2 c_I^2,
+\mel{D_i}{\hat{H}}{\Psi}^2 = \left( E\, \langle D_i | \Psi \rangle \right)^2 = E^2 c_i^2,
 \end{equation}
 and as $\ket{\Psi}$ is normalized, one obtains
 \begin{equation}
@@ -338,7 +343,7 @@ and as $\ket{\Psi}$ is normalized, one obtains
 The variance of the energy doesn't depend on the particular choice of the
 functions $\ket{\alpha}$, as long as they constitute an orthonormal set of
 functions spanning the space $\mathcal{E}$. Moreover, the variance of the
-energy is the equal for degenerate wave functions with different quantum
+energy is equal for degenerate wave functions with different quantum
 numbers $m_s$.  Hence, one can choose equivalently the $\ket{\alpha}$'s to be
 Slater determinants or \csf s.
 
