@@ -16,7 +16,6 @@
 \newcommand{\ttt}{\mathtt{t}}
 \newcommand{\mb}{\mathtt{b}}
 \newcommand{\md}{\mathtt{d}}
-\newcommand{\mD}{\mathcal{D}}
 \newcommand{\mpp}{\mathtt{p}}
 \newcommand{\mpv}{\mathbf{p}}
 \newcommand{\up}{\uparrow}
@@ -26,14 +25,30 @@
 \newcommand{\one}{{\texttt{1}}}
 \newcommand{\zero}{{\texttt{0}}}
 
-\newcommand{\sop}{\textsc{sop}}
-\newcommand{\cipsi}{\textsc{cipsi}}
-\newcommand{\csf}{\textsc{csf}}
-\newcommand{\sci}{s\textsc{ci}}
-\newcommand{\cpu}{\textsc{cpu}}
+%\newcommand{\sop}{\textsc{sop}}
+%\newcommand{\cipsi}{\textsc{cipsi}}
+%\newcommand{\csf}{\textsc{csf}}
+%\newcommand{\sci}{s\textsc{ci}}
+%\newcommand{\cpu}{\textsc{cpu}}
+\newcommand{\sop}{SOP}
+\newcommand{\cipsi}{CIPSI}
+\newcommand{\csf}{CSF}
+\newcommand{\sci}{sCI}
+\newcommand{\cpu}{CPU}
 \newcommand{\mel}[3]{\langle #1 | #2 | #3 \rangle}
 \newcommand{\ept}{E_\text{PT2}}
 
+% electrons on orbitals in equations
+\makeatletter
+\newcommand{\superimpose}[2]{%
+  {\ooalign{$#1\@firstoftwo#2$\cr\hfil$#1\@secondoftwo#2$\hfil\cr}}}
+\makeatother
+
+\newcommand{\orbup}{\mathpalette\superimpose{{-}{\uparrow}}}
+\newcommand{\orbdn}{\mathpalette\superimpose{{-}{\downarrow}}}
+\newcommand{\orb}{\mathpalette\superimpose{{-}{}}}
+\newcommand{\orbocc}{\mathpalette\superimpose{{-}{|}}}
+\newcommand{\orboccc}{\mathpalette\superimpose{{-}{||}}}
 
 
 
@@ -53,7 +68,7 @@ interaction}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
 Selected configuration interaction (\sci) methods, when complemented with
-a second order perturbative correction, provide near Full-CI (FCI)
+a second order perturbative correction, provide near full configuration interaction (FCI)
 quality energies with only a small fraction of the Slater determinants of the FCI
 space. The selection of the determinants is often implemented in a determinant-based 
 formalism, and therefore doesn't provide spin adapted wave functions, or in
@@ -86,7 +101,7 @@ negligible.
 In recent years, selected Configuration Interaction (\sci) methods have seen a resurgence in
 popularity,\cite{Greer_1998,Stampfuss_2005,Bytautas_2009,Booth_2009,Giner_2013,Buenker_2014,Holmes_2016,Ohtsuka_2017,Coe_2018}
 especially for the accurate calculation of electronic excitation
-energies.\cite{Coe_2013,Schriber_2017,Holmes_2017,Loos_2018,Scemama_2018,Dash_2018}
+energies.\cite{Coe_2013,Schriber_2017,Holmes_2017,Loos_2018,Scemama_2018,Dash_2018,Chien_2018,Loos_2018a}
 Balanced descriptions of excited states and dissociation curves require
 the wave functions to be spin adapted, i.e. eigenfunctions of the $\stwo$
 operator. A natural option would be to reformulate \sci{} in terms of
@@ -103,16 +118,37 @@ However, when the number of open shells is large, time-reversal symmetry is not
 sufficient to generate all the required spin permutations among the open shells
 which would generate all the determinants of the corresponding \csf.
 
+A \emph{space occupation pattern} (\sop) is a vector of occupation numbers
+of molecular orbitals. For example, the \sop{} $(2,1,1,1,1)$ is made of two \csf s
+and $6$ different Slater determinants:
+\begin{align}
+\left( {\scriptsize \begin{array}{c} \orbocc \\ \orbocc \\ \orbocc \\ \orbocc \\ \orboccc \end{array} } \right)
+& = \frac{1}{2} \left[
+    \left( {\scriptsize \begin{array}{c} \orbup \orb   \\ \orb \orbdn \\ \orb \orbdn  \\ \orbup \orb  \\ \orbup \orbdn \end{array} } \right) 
+  + \left( {\scriptsize \begin{array}{c} \orb \orbdn   \\ \orbup \orb \\ \orbup \orb  \\ \orb \orbdn  \\ \orbup \orbdn \end{array} } \right)
+  - \left( {\scriptsize \begin{array}{c} \orbup \orb   \\ \orb \orbdn \\ \orbup \orb  \\ \orb \orbdn  \\ \orbup \orbdn \end{array} } \right) 
+  - \left( {\scriptsize \begin{array}{c} \orb \orbdn   \\ \orbup \orb \\ \orb \orbdn  \\ \orbup \orb  \\ \orbup \orbdn \end{array} } \right) 
+\right] \nonumber \\
+& + \frac{\sqrt{3}}{6} \left[ 
+ -2 \left( {\scriptsize \begin{array}{c} \orb \orbdn  \\ \orb \orbdn  \\ \orbup \orb   \\ \orbup \orb \\ \orbup \orbdn \end{array} } \right) 
+  + \left( {\scriptsize \begin{array}{c} \orbup \orb   \\ \orb \orbdn \\ \orb \orbdn  \\ \orbup \orb  \\ \orbup \orbdn \end{array} } \right) 
+  + \left( {\scriptsize \begin{array}{c} \orbup \orb   \\ \orb \orbdn \\ \orbup \orb  \\ \orb \orbdn  \\ \orbup \orbdn \end{array} } \right)
+\right. \nonumber \\
+&\phantom{ = \frac{\sqrt{3}}{6} -} \left.
+ -2 \left( {\scriptsize \begin{array}{c} \orbup \orb   \\ \orbup \orb \\ \orb \orbdn  \\ \orb \orbdn  \\ \orbup \orbdn \end{array} } \right) 
+  + \left( {\scriptsize \begin{array}{c} \orb \orbdn   \\ \orbup \orb \\ \orbup \orb  \\ \orb \orbdn  \\ \orbup \orbdn \end{array} } \right) 
+  + \left( {\scriptsize \begin{array}{c} \orb \orbdn   \\ \orbup \orb \\ \orb \orbdn  \\ \orbup \orb  \\ \orbup \orbdn \end{array} } \right)
+\right].
+\end{align}
 A few years ago, Bytautas and Ruedenberg proposed a simple scheme to truncate
 large spin adapted wave functions while keeping the spin
 adaptation.\cite{Bytautas_2007}
 By definition, all the determinants belonging to the same {\csf} have the same
-\emph{Space Occupation Pattern} (\sop), so the
-coefficients of the determinants having the same {\sop}
-are summed together to produce the so-called \emph{space-product
-weights}, which are used to truncate the wave function. As spin coupling
-coefficients are included in the CI expansion, the truncated wave function is
-also an eigenfunction of $\stwo$.
+\sop , so the coefficients of the determinants
+with the same {\sop} are summed together to produce the so-called
+\emph{space-product weights}, which are used to truncate the wave function. As
+spin coupling coefficients are included in the CI expansion, the truncated wave
+function is also an eigenfunction of $\stwo$.
 
 Following this idea, imposing spin adaptation in \sci{} methods can be done by 
 \begin{enumerate}
@@ -129,16 +165,29 @@ the spin quantum number $m_s$ at no cost.
 All the presented algorithms were implemented in the \emph{Quantum Package}
 software.\cite{qp}
 
+% CSF     16: C(  1)=-0.577350 :  -4 -3  2  1
+%             C(  2)= 0.288675 :   4 -3 -2  1
+%             C(  3)= 0.288675 :  -4  3 -2  1
+%             C(  4)= 0.288675 :   4 -3  2 -1
+%             C(  5)= 0.288675 :  -4  3  2 -1
+%             C(  6)=-0.577350 :   4  3 -2 -1
+                                    
+% CSF     21: C(  1)= 0.500000 :   4 -3 -2  1
+%             C(  2)=-0.500000 :  -4  3 -2  1
+%             C(  3)=-0.500000 :   4 -3  2 -1
+%             C(  4)= 0.500000 :  -4  3  2 -1
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Algorithm}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Each Slater determinant $\mD_I$ is represented as a Waller-Hartree double
+Each Slater determinant $D_I$ is represented as a Waller-Hartree double
 determinant,\cite{Pauncz_1989}
 \begin{equation}
  \label{eq:di}
- \mD_I = D_i^\up \, D_j^\dn\, ,
+ D_I = d_i^\up \, d_j^\dn\, ,
 \end{equation}
 the product of a determinant of
 $\up$ spinorbitals with a determinant of $\dn$ spinorbitals.
@@ -162,7 +211,7 @@ the time stamp counter of the \cpu{} with the \texttt{rdtsc} instruction.
 \subsection{Identification of the space occupation patterns}
 %-----------------------------------------------------------
 
-The {\sop} $\mpv_I$ of determinant $\mD_I$, 
+The {\sop} $\mpv_I$ of determinant $D_I$, 
 defined in Eq.\eqref{eq:di},
 is a vector of integers defined as
 \begin{equation}
@@ -184,7 +233,7 @@ occupied orbitals, the {\sop} can be computed as
   \end{cases} 
 \end{equation}
 where $\oplus$ denotes the \texttt{xor} operator and $\wedge$ denotes the
-\texttt{and} operator.
+\texttt{and} operator (see Fig.~\ref{fig:mapping} for a pictorial representation).
 
 Transforming all the determinants into a list of unique \sop s can be done
 in linear time if a hash value is associated with each \sop
@@ -313,7 +362,7 @@ algorithm, and generate two determinants per iteration.
 Let us consider a real-valued normalized spin-adapted wave function with
 energy $E$, expressed as
 \begin{equation}
-\ket{\Psi} = \sum_{i \in \mathcal{I}} c_i \ket{D_i}
+\ket{\Psi} = \sum_{i \in \mathcal{I}} c_I \ket{D_I}
 \end{equation}
 which is an eigenfunction of the Hamiltonian projected in the internal space of
 determinants $\mathcal{I}$.
@@ -322,7 +371,7 @@ The variance of the energy associated with this function is
 \sigma^2 = \mel{\Psi}{\hat{H}^2}{\Psi} - \mel{\Psi}{\hat{H}}{\Psi}^2 .
 \end{equation}
 Inserting the resolution of the identity for $\hat{H}^2$ gives an
-approximation of the variance truncated to the Full Configuration Interaction (FCI) space
+approximation of the variance truncated to the full configuration interaction (FCI) space
 \begin{equation}
 \sigma^2 = \sum_{\alpha \in \text{FCI}} \mel{\Psi}{\hat{H}}{\alpha} \mel{\alpha}{\hat{H}}{\Psi} - E^2
 \label{eq:ri}
@@ -340,12 +389,12 @@ The FCI space can be split in three subspaces:
 $\hat{H}$ is symmetric and $\ket{\Psi}$ is real, so Eq.~\eqref{eq:ri} can be
 re-written as
 \begin{equation}
-\sigma^2 = \sum_{D_i    \in \mathcal{I}} \mel{D_i}{\hat{H}}{\Psi}^2 
+\sigma^2 = \sum_{D_I    \in \mathcal{I}} \mel{D_I}{\hat{H}}{\Psi}^2 
          + \sum_{\alpha \in \mathcal{E}} \mel{\alpha}{\hat{H}}{\Psi}^2 - E^2.
 \end{equation}
 As $\ket{\Psi}$ is an eigenfunction of $\hat{H}$ projected in $\mathcal{I}$, 
 \begin{equation}
-\mel{D_i}{\hat{H}}{\Psi}^2 = \left( E\, \langle D_i | \Psi \rangle \right)^2 = E^2 c_i^2,
+\mel{D_I}{\hat{H}}{\Psi}^2 = \big( E\, \langle D_I | \Psi \rangle \big)^2 = E^2 c_I^2,
 \end{equation}
 and as $\ket{\Psi}$ is normalized, one obtains
 \begin{equation}
@@ -404,40 +453,40 @@ $\ket{\alpha}$.
 To circumvent this problem, one can remark that for the majority of the
 contributions to
 \begin{equation}
- \mel{\alpha}{\hat{H}}{\Psi} = \sum_i c_i \mel{\alpha}{\hat{H}}{D_i}
+ \mel{\alpha}{\hat{H}}{\Psi} = \sum_I c_I \mel{\alpha}{\hat{H}}{D_I}
 \end{equation}
-$\ket{\alpha}$ is doubly excited with respect to $\ket{D_i}$.
-We now consider that $\ket{D_i}$ is the determinant with the lowest
+$\ket{\alpha}$ is doubly excited with respect to $\ket{D_I}$.
+We now consider that $\ket{D_I}$ is the determinant with the lowest
 energy among all the determinants sharing the same \sop .
-For all the other determinants $\ket{D_j}$ belonging to the same \sop{}
-as $\ket{D_i}$ and doubly excited with respect to $\ket{D_i}$, one can define
+For all the other determinants $\ket{D_J}$ belonging to the same \sop{}
+as $\ket{D_I}$ and doubly excited with respect to $\ket{D_I}$, one can define
 a double excitation operator
 \begin{equation}
-\hat{T}_{i\rightarrow j} \ket{D_i} = \ket{D_j}.
+\hat{T}_{I\rightarrow J} \ket{D_I} = \ket{D_J}.
 \end{equation}
 Remarking that 
 \begin{equation}
-\mel{\hat{T}_{i\rightarrow j} D_i}{\hat{H}}{\hat{T}_{i\rightarrow j} \alpha} 
+\mel{\hat{T}_{I\rightarrow J} D_I}{\hat{H}}{\hat{T}_{I\rightarrow J} \alpha} 
 \begin{cases}
-\pm \mel{\alpha}{\hat{H}}{D_i} & \text{ if } \hat{T}_{i\rightarrow j}\ket{\alpha} \ne 0 \\
+\pm \mel{\alpha}{\hat{H}}{D_I} & \text{ if } \hat{T}_{I\rightarrow J}\ket{\alpha} \ne 0 \\
 0 & \text{otherwise},
 \end{cases}
 \end{equation}
-the contributions connected by $\hat{H}$ to $\ket{D_j}$ are the
-$\hat{T}_{i\rightarrow j} \ket{\alpha}$ which have a diagonal element which
+the contributions connected by $\hat{H}$ to $\ket{D_J}$ are the
+$\hat{T}_{I\rightarrow J} \ket{\alpha}$ which have a diagonal element which
 will be shifted by 
 \begin{equation}
-E_\alpha = \langle \hat{T}_{i\rightarrow j} \alpha | \hat{H} | \hat{T}_{i\rightarrow j} \alpha \rangle - \langle \alpha | \hat{H} | \alpha \rangle
+E_\alpha = \langle \hat{T}_{I\rightarrow J} \alpha | \hat{H} | \hat{T}_{I\rightarrow J} \alpha \rangle - \langle \alpha | \hat{H} | \alpha \rangle
 \end{equation}
 This quantity may be approximated by
 \begin{equation}
-E_j = \langle D_j | \hat{H} | D_j \rangle - \langle D_i | \hat{H} | D_i \rangle,
+E_J = \langle D_J | \hat{H} | D_J \rangle - \langle D_I | \hat{H} | D_I \rangle,
 \end{equation}
-and the approximate shifts $E_j$ can be precomputed.
-If $\ket{\alpha}$ is connected to multiple $\ket{D_i}$, we take the energy
-shift associated with the $\ket{D_i}$ with largest associated $|c_i|$.  As our
+and the approximate shifts $E_J$ can be precomputed.
+If $\ket{\alpha}$ is connected to multiple $\ket{D_I}$, we take the energy
+shift associated with the $\ket{D_I}$ with largest associated $|c_I|$.  As our
 implementation generates the $\ket{\alpha}$'s with no duplicates from the
-$\ket{D_i}$ sorted by decreasing $|c_i|$, the use of the shift can be made at
+$\ket{D_I}$ sorted by decreasing $|c_I|$, the use of the shift can be made at
 no cost.
 
 
@@ -468,7 +517,7 @@ calculation:
 The system is composed of $62$ molecular orbitals, so for this simple case $\Nint=1$.
 The orbitals were obtained at the restricted open-shell Hartree-Fock (ROHF) level
 for $m_s=6$.
-The selection is performed in the valence Full-CI space, with $20$ frozen electrons.
+The selection is performed in the valence FCI space, with $20$ frozen electrons.
 
 The $m_s=0$ wave function was initialized by taking the same {\sop} as the
 one of the single determinant of the $m_s=6$ wave function, and generating all
@@ -500,10 +549,10 @@ the EN denominators or the shifted EN denominators.}
 \label{fig:e_pt2_nsop}
 \end{figure}
 
-For the $m_s=6$ wave function, we have run a CIPSI selection imposing or not the
+For the $m_s=6$ wave function, we have run a \cipsi{} selection imposing or not the
 wave function to be spin-adapted. As expected, for the same energy the number of
 determinants is increased when spin adaptation is imposed. Then, we have run the
-CIPSI selection for the $m_s=0$ wave function imposing the
+\cipsi{} selection for the $m_s=0$ wave function imposing the
 spin adaptation. The convergence of the energy is plotted as a function of the
 number of determinants in Fig.~\ref{fig:e_var_ndet}, and as a function of
 the number of \sop{} in Fig.~\ref{fig:e_var_nsop}.
@@ -540,7 +589,7 @@ common benchmark for correlated methods, as the location of the crossing is high
 sensitive to the amount of correlation. At large distances, the lowest triplet state
 is very close in energy to the singlet states. If the wave function is not
 spin adapted, the triplet state will mix with the singlets during the selection
-and the convergence of the CIPSI calculations to the correct states is not guaranteed.
+and the convergence of the \cipsi{} calculations to the correct states is not guaranteed.
 
 \begin{figure}
 \includegraphics[width=0.9\columnwidth]{lif}
@@ -551,7 +600,7 @@ and the convergence of the CIPSI calculations to the correct states is not guara
 To show the importance of spin adaptation for such a problem, we have reported
 in Fig.~\ref{fig:lif} the potential energy curve of the two lowest states of
 LiF computed with and without imposing spin adaptation. For all the distances,
-the CIPSI calculations were run blindly (with no user interaction), starting
+the \cipsi{} calculations were run blindly (with no user interaction), starting
 with the CAS-SCF(2,2)/aug-cc-pVDZ  wave functions of both states (four
 determinants). Only the lowest molecular orbital was frozen, corresponding to
 the $1s$ orbital of the Fluorine atom. The calculations were stopped when the
@@ -572,15 +621,15 @@ energy of the formaldehyde molecule with the aug-cc-pVDZ basis set.  The ground
 state is well described by a single determinant, and the excited state is an
 open shell singlet obtained by a $^1(n \rightarrow \pi^*)$ single excitation,
 so its main {\csf} contains two determinants.  The geometries of the ground and
-excited states were taken from Ref~\citep{Loos_2018}. For both geometries, a
-preliminary CIPSI calculation was run to produce state-averaged natural
+excited states were taken from \citet{Loos_2018}. For both geometries, a
+preliminary \cipsi{} calculation was run to produce state-averaged natural
 orbitals, in order to produce molecular orbitals of comparable quality for
 both states. Hence, the rate of convergence of the energy with respect to the
 number of selected \csf s is expected to be comparable for both states.
 However, we expect the rate of convergence of the energy with respect to the
 number of selected determinants to be different. 
 
-For each state a state-specific CIPSI calculation was run at its equilibrium
+For each state a state-specific \cipsi{} calculation was run at its equilibrium
 geometry.
 For the excited state, the run was initiated using a wave function with
 the two determinants of the reference \csf , and a state-following approach was
@@ -629,7 +678,7 @@ number of \csf s is more relevant than the number of Slater determinants and
 considering \sop s allows to stay in the determinant framework while still
 benefiting from the consistence brought by \csf s.
 Finally, we would like to emphasize that this spin adaptation procedure can be
-applied to any selected CI method: Heat-Bath CI, Machine Learning CI, Monte
+applied to any selected CI method: heat-bath CI, machine learning CI, Monte
 Carlo CI, \textit{etc}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
