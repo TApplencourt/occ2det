@@ -37,7 +37,7 @@
 
 \begin{document}
 
-\title{Enforcing spin adaptation in determinant-based selected configuration
+\title{Spin adaptation with determinant-based selected configuration
 interaction}
 
 \author{Thomas Applencourt}
@@ -50,18 +50,23 @@ interaction}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
-We present an algorithm which, given an arbitrary determinant space, generates
-all the missing determinants allowing one to obtain spin adapted wave
-functions while avoiding working with configuration state functions.  Although
-the idea to enforce spin adaptation in determinant-based calculations is not
-new, we propose an original algorithm for the generation of the Slater
-determinants which is extremely efficient: generating all the possible
-determinants with 6 $\up$-spin and 6 $\dn$-spin electrons in 12 open shells
-took 21 CPU cycles per generated Slater determinant. We also propose a
-modification of the denominators in the Epstein-Nesbet perturbation theory
-reducing significantly the non-invariance of the second order correction with
-respect to different values of the spin quantum number $m_s$.  The
-computational cost of this correction is also negligible.
+Selected configuration interaction (sCI) methods provide near Full-CI (FCI)
+quality energies with only a small fraction of the determinants of the FCI
+space. These methods are often implemented in a Slater determinant-based 
+formalism, and don't provide spin adapted wave functions due to the truncation
+of the wave function. We present an algorithm which, given an arbitrary
+determinant space, generates all the missing determinants allowing one to
+obtain spin adapted wave functions while avoiding working with configuration
+state functions. Although the idea to enforce spin adaptation in
+determinant-based calculations is not new, we propose an original and 
+efficient algorithm for the generation of the Slater determinants. For example,
+generating all the possible determinants with 6 $\up$-spin and 6 $\dn$-spin
+electrons in 12 open shells takes 21 CPU cycles per generated Slater
+determinant. We also propose a modification of the denominators in the
+Epstein-Nesbet perturbation theory reducing significantly the non-invariance of
+the second order correction with respect to different values of the spin
+quantum number $m_s$. The computational cost of this correction is also
+negligible.
 \end{abstract}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -271,7 +276,7 @@ To build a generated determinant $(\md_\up,\md_\dn)$ from a permutation $\tu$, o
 \subsection{Further optimizations}
 
 As a first optimization, instead of creating each determinant from the
-permutation as shown in Fig.~\ref{fig:mapping}, all the determinants can be 
+permutation as shown in Fig.~\ref{fig:mapping}, all the determinants can be
 generated iteratively by considering only the orbitals that have changed
 from the previously generated determinant.
 Indeed, the integer obtained by $\mathtt{v[k-1]} \oplus \mathtt{v[k]}$ has bits set at the positions where the bits differ between $\mathtt{v[k-1]}$ and
