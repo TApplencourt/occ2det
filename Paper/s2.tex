@@ -29,6 +29,8 @@
 \newcommand{\sop}{\textsc{sop}}
 \newcommand{\cipsi}{\textsc{cipsi}}
 \newcommand{\csf}{\textsc{csf}}
+\newcommand{\sci}{s\textsc{ci}}
+\newcommand{\cpu}{\textsc{cpu}}
 \newcommand{\mel}[3]{\langle #1 | #2 | #3 \rangle}
 \newcommand{\ept}{E_\text{PT2}}
 
@@ -50,18 +52,21 @@ interaction}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
-Selected configuration interaction (sCI) methods provide near Full-CI (FCI)
-quality energies with only a small fraction of the determinants of the FCI
-space. These methods are often implemented in a Slater determinant-based 
-formalism, and don't provide spin adapted wave functions due to the truncation
-of the wave function. We present an algorithm which, given an arbitrary
-determinant space, generates all the missing determinants allowing one to
+Selected configuration interaction (\sci) methods, when complemented with
+a second order perturbative correction, provide near Full-CI (FCI)
+quality energies with only a small fraction of the Slater determinants of the FCI
+space. The selection of the determinants is often implemented in a determinant-based 
+formalism, and therefore doesn't provide spin adapted wave functions, or in
+other words eigenfunctions of the $\stwo$ operator. In some situations, having a spin
+adapted wave function is essential for the proper convergence of the method.
+We present an algorithm which, given an arbitrary
+determinant space, generates all the missing Slater determinants allowing one to
 obtain spin adapted wave functions while avoiding working with configuration
 state functions. Although the idea to enforce spin adaptation in
 determinant-based calculations is not new, we propose an original and 
 efficient algorithm for the generation of the Slater determinants. For example,
 generating all the possible determinants with 6 $\up$-spin and 6 $\dn$-spin
-electrons in 12 open shells takes 21 CPU cycles per generated Slater
+electrons in 12 open shells takes 21 \cpu{} cycles per generated Slater
 determinant. We also propose a modification of the denominators in the
 Epstein-Nesbet perturbation theory reducing significantly the non-invariance of
 the second order correction with respect to different values of the spin
@@ -78,13 +83,13 @@ negligible.
 \section{Introduction}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-In recent years, selected Configuration Interaction (sCI) methods have seen a resurgence in
+In recent years, selected Configuration Interaction (\sci) methods have seen a resurgence in
 popularity,\cite{Greer_1998,Stampfuss_2005,Bytautas_2009,Booth_2009,Giner_2013,Buenker_2014,Holmes_2016,Ohtsuka_2017,Coe_2018}
 especially for the accurate calculation of electronic excitation
 energies.\cite{Coe_2013,Schriber_2017,Holmes_2017,Loos_2018,Scemama_2018,Dash_2018}
 Balanced descriptions of excited states and dissociation curves require
 the wave functions to be spin adapted, i.e. eigenfunctions of the $\stwo$
-operator. A natural option would be to reformulate sCI in terms of
+operator. A natural option would be to reformulate \sci{} in terms of
 Configuration State Functions (\csf), but many codes were written in a
 determinant-based formulation, and opting for the {\csf} formalism would require
 a major re-writing of the software. Moreover, such a modification might
@@ -109,7 +114,7 @@ weights}, which are used to truncate the wave function. As spin coupling
 coefficients are included in the CI expansion, the truncated wave function is
 also an eigenfunction of $\stwo$.
 
-Following this idea, imposing spin adaptation in sCI methods can be done by 
+Following this idea, imposing spin adaptation in \sci{} methods can be done by 
 \begin{enumerate}
 \item Identifying all the space occupation patterns of the determinants composing
       the variational space
@@ -148,9 +153,9 @@ string may be stored as an array of $\Nint$ 64-bit integers, where
 This representation allows for efficient determinant comparisons using bit-wise operation 
 capabilities of modern processors\cite{Scemama_2013} and will be convenient in the following.
 
-All the CPU cycle measurements were performed on an Intel(R) Xeon(R)
-Gold 6140 CPU @ 2.30GHz with the GNU Fortran compiler 7.3.0, by reading
-the time stamp counter of the CPU with the \texttt{rdtsc} instruction.
+All the \cpu{} cycle measurements were performed on an Intel(R) Xeon(R)
+Gold 6140 \cpu @ 2.30GHz with the GNU Fortran compiler 7.3.0, by reading
+the time stamp counter of the \cpu{} with the \texttt{rdtsc} instruction.
 
 
 %-----------------------------------------------------------
@@ -254,7 +259,7 @@ greater than $2^{n_\up+n_\dn}-1$:
     \item The position of the least significant \one{} of $\tu$ is identified by counting the number of trailing zeros in $\tu$. This \one{} should be changed into a \zero{}.
     \item At the right of this position, the least significant \zero's should be changed to \one's such that the total number of \one's is the same as in $\tu$.
 \end{enumerate}
-The corresponding pseudo-code is presented in Fig.~\ref{fig:algo}. On average, one loop cycle executes in $8.2$~CPU cycles.
+The corresponding pseudo-code is presented in Fig.~\ref{fig:algo}. On average, one loop cycle executes in $8.2$~\cpu{} cycles.
 
 \begin{figure}[t]
 \includegraphics[width=0.9\columnwidth]{pattern.tikz} 
@@ -371,8 +376,8 @@ to be the same for all the determinants belonging to the same \csf . But as
 the same determinant can appear in the expression of multiple \csf s, Davidson
 proposed to use a modified EN zeroth-order Hamiltonian formed from
 diagonal elements averaged over Slater determinants belonging to the same
-\sop . This idea was implemented 20 years ago in the MELD sCI
-program,\cite{Davidson_1979,Kozlowski_1994} and also in SCIEL.\cite{Sciel}
+\sop . This idea was implemented 20 years ago in the \textsc{Meld} 
+program,\cite{Davidson_1979,Kozlowski_1994} and also in \textsc{Sciel}.\cite{Sciel}
 
 This modified zeroth order Hamiltonian implies that the weight is the same for
 all the determinants belonging to the same \sop . This can be done by
@@ -452,7 +457,7 @@ To test our implementation with a large number of open shells, we have prepared
 model wave functions for the dissociated Chromium dimer in its 13-et state, separated by a
 distance of $100$~\AA, using the def2-SVP basis.\cite{Weigend_2005}
 At such a large distance, each Chromium atom is in its high-spin state with $6$
-unpaired electrons. Two equivalent wave functions are built to initialize the sCI
+unpaired electrons. Two equivalent wave functions are built to initialize the \sci{}
 calculation:
 \begin{itemize}
 \item The $m_s=6$ wave function, which is a single determinant with $30$ $\up$
@@ -469,7 +474,7 @@ The $m_s=0$ wave function was initialized by taking the same {\sop} as the
 one of the single determinant of the $m_s=6$ wave function, and generating all
 the possible determinants using the algorithm presented in this paper.
 The generation of the $924$ determinants was done in $\sim 19~200$
-CPU cycles ($\sim8$ microseconds), i.e.  $21$~cycles per generated determinant. The Hamiltonian was
+\cpu{} cycles ($\sim8$ microseconds), i.e.  $21$~cycles per generated determinant. The Hamiltonian was
 diagonalized and we checked that the lowest state with $\langle \stwo \rangle =
 42$ had the exact same energy as the $m_s=6$ single determinant.
 
