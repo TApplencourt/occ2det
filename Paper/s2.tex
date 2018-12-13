@@ -87,7 +87,7 @@ increase the computational cost.\cite{Knowles_1984,Olsen_1988}
 
 In the context of heat-bath selection, Holmes \textit{et al} have 
 improved the spin purity of the wave functions by introducing ``time-reversal
-symmetry''\cite{Holmes_2017}, which consists in exchanging the spin labels of
+symmetry'', \cite{Holmes_2017} which consists in exchanging the spin labels of
 the electrons.
 However, when the number of open shells is large, time-reversal symmetry is not
 sufficient to generate all the required spin permutations among the open shells
@@ -222,11 +222,11 @@ $\mathbf{m}$ for later use.
 \end{algorithmic}
 \caption{ Anderson's algorithm to generate all the patterns of $\mathtt{n}$ bits
           set to \one{} in an integer of $\mathtt{n+m}$ bits in lexicographic order.
-          $\mathtt{ctz}$ counts the number of trailing zeros, 
-          $\mathtt{i \ll n}$~: shifts $\mathtt{i}$ $\mathtt{n}$ bits to the left, 
-          $\mathtt{i \gg n}$~: shifts $\mathtt{i}$ $\mathtt{n}$ bits to the right, 
-          $\mathtt{\wedge}$~: bit-wise \texttt{and} operation, and
-          $\mathtt{\vee}$~: bit-wise \texttt{or} operation.}
+          $\mathtt{ctz(i}$ counts the number of trailing zeros, 
+          $\mathtt{i \ll n}$ shifts  $\mathtt{i}$ by $\mathtt{n}$ bits to the left, 
+          $\mathtt{i \gg n}$ shifts $\mathtt{i}$ by $\mathtt{n}$ bits to the right, 
+          $\mathtt{\wedge}$ is the bit-wise \texttt{and} operator, and
+          $\mathtt{\vee}$ is the bit-wise \texttt{or} operator.}
 \label{fig:algo}
 \end{figure}
 
@@ -249,7 +249,7 @@ greater than $2^{n_\up+n_\dn}-1$:
     \item The position of the least significant \one{} of $\tu$ is identified by counting the number of trailing zeros in $\tu$. This \one{} should be changed into a \zero{}.
     \item At the right of this position, the least significant \zero's should be changed to \one's such that the total number of \one's is the same as in $\tu$.
 \end{enumerate}
-The corresponding pseudo-code is presented in Fig.~\ref{fig:algo}. On average, one loop cycle executes in only $8.2$~CPU cycles.
+The corresponding pseudo-code is presented in Fig.~\ref{fig:algo}. On average, one loop cycle executes in $8.2$~CPU cycles.
 
 \begin{figure}[t]
 \includegraphics[width=0.9\columnwidth]{pattern.tikz} 
@@ -271,23 +271,22 @@ To build a generated determinant $(\md_\up,\md_\dn)$ from a permutation $\tu$, o
 \subsection{Further optimizations}
 
 As a first optimization, instead of creating each determinant from the
-permutation as shown in Fig.~\ref{fig:mapping}, all the determinants can be
+permutation as shown in Fig.~\ref{fig:mapping}, all the determinants can be 
 generated iteratively by considering only the orbitals that have changed
 from the previously generated determinant.
-The integer obtained by $\mathtt{v[k-1]} \oplus \mathtt{v[k]}$ has bits set at
-the positions where the bits differ between $\mathtt{v[k-1]}$ and
+Indeed, the integer obtained by $\mathtt{v[k-1]} \oplus \mathtt{v[k]}$ has bits set at the positions where the bits differ between $\mathtt{v[k-1]}$ and
 $\mathtt{v[k]}$. The positions of these bits can be found in a few cycles by
 iteratively:
 \begin{enumerate}
-\item counting the number of trailing zeros
-\item setting the least significant {\one} to {\zero} by setting
-      $\mathtt{v[k] \gets v \wedge (v-1)}$
+\item Counting the number of trailing zeros.
+\item Setting the least significant {\one} to {\zero} by setting
+      $\mathtt{v[k] \gets v \wedge (v-1)}$.
 \end{enumerate}
-until $v[k] = 0$. 
+until $\mathtt{v[k]} = 0$. 
 
 A second optimization is to consider time-reversal symmetry. When $n_\up =
 n_\dn$, one can remark that ${\mathtt{v[n_{det}}-1-\mathtt{k]} = \neg \mathtt{v[k]}}$, 
-where $\mathtt{n_{det}}$ is the number of determinants
+where $\mathtt{n_{det}}$ is the number of determinants generated:
 \begin{equation}
 \mathtt{n_{det}} = \frac{(n_\up +n_\dn)!}{n_\up! n_\dn!}
 \end{equation}
@@ -313,8 +312,7 @@ The variance of the energy associated with this function is
 \sigma^2 = \mel{\Psi}{\hat{H}^2}{\Psi} - \mel{\Psi}{\hat{H}}{\Psi}^2 .
 \end{equation}
 Inserting the resolution of the identity for $\hat{H}^2$ gives an
-approximation of the variance truncated to the Full Configuration Interaction
-(FCI) space, 
+approximation of the variance truncated to the Full Configuration Interaction (FCI) space
 \begin{equation}
 \sigma^2 = \sum_{\alpha \in \text{FCI}} \mel{\Psi}{\hat{H}}{\alpha} \mel{\alpha}{\hat{H}}{\Psi} - E^2
 \label{eq:ri}
@@ -455,7 +453,7 @@ calculation:
 \item The $m_s=6$ wave function, which is a single determinant with $30$ $\up$
       and $18$ $\dn$ electrons.
 \item The 13-et $m_s=0$ wave function with $24$ $\up$ and $24$ $\dn$ electrons, which
-      contains 924 determinants
+      contains 924 determinants.
 \end{itemize}
 The system is composed of $62$ molecular orbitals, so for this simple case $\Nint=1$.
 The orbitals were obtained at the restricted open-shell Hartree-Fock (ROHF) level
@@ -621,7 +619,7 @@ number of \csf s is more relevant than the number of Slater determinants and
 considering \sop s allows to stay in the determinant framework while still
 benefiting from the consistence brought by \csf s.
 Finally, we would like to emphasize that this spin adaptation procedure can be
-applied to any selected CI method : Heat-Bath CI, Machine Learning CI, Monte
+applied to any selected CI method: Heat-Bath CI, Machine Learning CI, Monte
 Carlo CI, \textit{etc}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
