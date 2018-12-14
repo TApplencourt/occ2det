@@ -418,7 +418,7 @@ choice of $\ket{\alpha}$. Also, when a basis of Slater determinants is chosen,
 this expression is not invariant with respect to the choice of $m_s$, and this 
 is not desirable.
 
-A way to cure the invariance with respect to $m_s$ is to impose all the weights
+A way to cure the lack of invariance with respect to $m_s$ is to impose all the weights
 to be the same for all the determinants belonging to the same \csf . But as 
 the same determinant can appear in the expression of multiple \csf s, Davidson
 proposed to use a modified EN zeroth-order Hamiltonian formed from
@@ -446,8 +446,8 @@ same \sop{} as $\ket{\alpha}$.
 This choice of $E_\alpha$ is not the same as Davidson's, but it also
 gives the same weight for all the values of $m_s$.
 Although the generation of all the determinants is extremely fast, using
-this approximation can become expensive since it requires to compute
-all the diagonal elements $\mel{\beta}{\hat{H}}{\beta}$ for each
+this approximation can become expensive since it requires the computation of
+all diagonal elements $\mel{\beta}{\hat{H}}{\beta}$ for each
 $\ket{\alpha}$.
 
 To circumvent this problem, one can remark that for the majority of the
@@ -549,7 +549,8 @@ the EN denominators or the shifted EN denominators.}
 \label{fig:e_pt2_nsop}
 \end{figure}
 
-For the $m_s=6$ wave function, we have run a \cipsi{} selection imposing or not the
+
+For the $m_s=6$ wave function, we have run a \cipsi{} selection constraining or not the
 wave function to be spin-adapted. As expected, for the same energy the number of
 determinants is increased when spin adaptation is imposed. Then, we have run the
 \cipsi{} selection for the $m_s=0$ wave function imposing the spin adaptation.
@@ -567,16 +568,16 @@ framework.
 
 Fig.~\ref{fig:e_pt2_nsop} shows that the EN $\ept$ values are very different
 between $m_s=6$ and $m_s=0$ when the number of \sop{} is less than 1000. The
-shifted EN and the EN values give almost identical energy curves for $m_s=6$.
+shifted EN and the EN values give almost identical energy curves for $m_s=6$;
 %The tiny difference comes from the slightly different selection of determinants
 %induced by the change of perturbation expression.
-On the contrary, the shifted EN
-corrects the wrong behavior of the curve for small numbers of \sop{}, and then
-the shifted EN and the EN curves join, before converging to the same curve as
-the $m_s=6$ curve. When the shifted EN and EN curves join, it indicates
-that all the determinants of the external space with low energies have been selected 
+however, for $m_s=0$ the shifted EN fixes the incorrect behavior of the curve
+for small numbers of \sop . For larger numbers of \sop , the two $m_s=0$
+curves join before converging to
+the $m_s=6$ curve. The joining of the shifted EN and EN curves signifies
+that all the determinants of the external space with low energies have been included
 in the internal space. In addition, the $E$ term in the denominator becomes more
-negative as plotted in Fig.~\ref{fig:e_var_nsop}, so all the denominators tend to be large enough so that the use of the energetic shift becomes less and
+negative as plotted in Fig.~\ref{fig:e_var_nsop}, so all the denominators tend to be large enough that the use of the energetic shift becomes less and
 less important.
 
 
