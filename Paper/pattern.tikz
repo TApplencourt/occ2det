@@ -1,4 +1,4 @@
-\begin{tikzpicture}
+﻿\begin{tikzpicture}
 
 
    \node[left] at (-0.5,2) {$\mathbf{p}_I$};
@@ -57,8 +57,8 @@
 
 \newcommand\YY{-8.5}
 
-   \node at (-0.5,2.5+\YY) { $\mathtt{d}_\uparrow$ };
-   \node at (-0.5,-2.5+\YY) { $\mathtt{d}_\downarrow$ };
+   \node[left] at (-0.5,2.5+\YY) { $\mathtt{d}_\uparrow$ };
+   \node[left] at (-0.5,-2.5+\YY) { $\mathtt{d}_\downarrow$ };
 
     % Up and Down strings
 	\foreach \x in {0,...,9} {
@@ -69,7 +69,7 @@
 	}
 
     % v
-   \node at (-0.5,0+\YY) { $\mathtt{v[k]}$ };
+   \node[left] at (-0.5,0+\YY) { $\mathtt{v[k]}$ };
 	\foreach \x in {0,...,3} {
 	 	\draw[fill=yellow!20!white] (\x,-0.5+\YY) rectangle (\x+1,0.5+\YY) ;	
 		\node at (\x+0.2,-0.7+\YY) { \scriptsize \texttt{\x} };
