@@ -124,18 +124,18 @@ with coefficients $\mu$ and $\nu$ in the wave function, and $6$ different
 Slater determinants:
 \begin{align}
 \left( {\scriptsize \begin{array}{c} \orbocc \\ \orbocc \\ \orbocc \\ \orbocc \\ \orboccc \end{array} } \right)
-& = \mu \times \frac{1}{2} \left[
+ = \mu \times \frac{1}{2} & \left[
     \left( {\scriptsize \begin{array}{c} \orbup \orb   \\ \orb \orbdn \\ \orb \orbdn  \\ \orbup \orb  \\ \orbup \orbdn \end{array} } \right) 
   + \left( {\scriptsize \begin{array}{c} \orb \orbdn   \\ \orbup \orb \\ \orbup \orb  \\ \orb \orbdn  \\ \orbup \orbdn \end{array} } \right)
   - \left( {\scriptsize \begin{array}{c} \orbup \orb   \\ \orb \orbdn \\ \orbup \orb  \\ \orb \orbdn  \\ \orbup \orbdn \end{array} } \right) 
   - \left( {\scriptsize \begin{array}{c} \orb \orbdn   \\ \orbup \orb \\ \orb \orbdn  \\ \orbup \orb  \\ \orbup \orbdn \end{array} } \right) 
 \right] \nonumber \\
-& + \nu \times \frac{\sqrt{3}}{6} \left[ 
+ + \nu \times \frac{\sqrt{3}}{6} & \left[ 
  -2 \left( {\scriptsize \begin{array}{c} \orb \orbdn  \\ \orb \orbdn  \\ \orbup \orb   \\ \orbup \orb \\ \orbup \orbdn \end{array} } \right) 
   + \left( {\scriptsize \begin{array}{c} \orbup \orb   \\ \orb \orbdn \\ \orb \orbdn  \\ \orbup \orb  \\ \orbup \orbdn \end{array} } \right) 
   + \left( {\scriptsize \begin{array}{c} \orbup \orb   \\ \orb \orbdn \\ \orbup \orb  \\ \orb \orbdn  \\ \orbup \orbdn \end{array} } \right)
 \right. \nonumber \\
-&\phantom{ = \frac{\sqrt{3}}{6} -} \left.
+\phantom{ = \frac{\sqrt{3}}{6} -} &\ \  \left.
  -2 \left( {\scriptsize \begin{array}{c} \orbup \orb   \\ \orbup \orb \\ \orb \orbdn  \\ \orb \orbdn  \\ \orbup \orbdn \end{array} } \right) 
   + \left( {\scriptsize \begin{array}{c} \orb \orbdn   \\ \orbup \orb \\ \orbup \orb  \\ \orb \orbdn  \\ \orbup \orbdn \end{array} } \right) 
   + \left( {\scriptsize \begin{array}{c} \orb \orbdn   \\ \orbup \orb \\ \orb \orbdn  \\ \orbup \orb  \\ \orbup \orbdn \end{array} } \right)
@@ -154,9 +154,9 @@ truncated wave function is also an eigenfunction of $\stwo$.
 Following this idea, imposing spin adaptation in {\sci} methods can be done by 
 \begin{enumerate}
 \item Identifying all the space occupation patterns of the determinants composing
-      the variational space
+      the variational space.
 \item Generating all the determinants with imposed numbers of up-spin ($\up$) and
-      down-spin ($\dn$) electrons corresponding to these space occupation patterns
+      down-spin ($\dn$) electrons corresponding to these space occupation patterns.
 \item Diagonalizing the Hamiltonian in this expanded determinant space.
 \end{enumerate}
 An efficient algorithm to achieve this procedure is presented in this paper,
@@ -321,7 +321,7 @@ Fig.~\ref{fig:mapping} gives a pictorial description of the data structures used
 To build a generated determinant $(\md_\up,\md_\dn)$ from a permutation $\tu$, one needs to
 \begin{enumerate}
     \item Fill the doubly occupied orbitals by setting both $\md_\up$ and $\md_\dn$
-          equal to $\mpp_I^{(2)}$
+          equal to $\mpp_I^{(2)}$.
     \item Iterate over the bits of $\tu$. If the $k$-th bit is set to $\one$,
           set the $m_k$-th orbital of $d_\up$ to $\one$, otherwise set the $m_k$-th orbital
           of $d_\dn$ to $\one$.
@@ -381,10 +381,10 @@ where $\mathcal{F}$ denotes a complete set of arbitrary orthonormal basis
 functions, $\ket{\alpha}$, spanning the FCI space.
 The FCI space can be split in three subspaces:
 \begin{itemize}
-\item The internal space $\mathcal{I}$
-\item The external space $\mathcal{E}$ which is the subset of functions
-      $\ket{\alpha}$ which don't belong to $\mathcal{I}$, and for which
-      $\mel{\alpha}{\hat{H}}{\Psi} \ne 0$
+\item The internal space $\mathcal{I}$.
+\item The external space $\mathcal{E}$ which is the subset of functions.
+      $\ket{\alpha}$ which don't belong to $\mathcal{I}$, and for which.
+      $\mel{\alpha}{\hat{H}}{\Psi} \ne 0$.
 \item The rest of the FCI space.
 \end{itemize}
 $\hat{H}$ is symmetric and $\ket{\Psi}$ is real, so Eq.~\eqref{eq:ri} can be
@@ -589,7 +589,7 @@ The avoided crossing between the ionic and neutral $^1\Sigma^+$ states of LiF is
 common benchmark for correlated methods, as the location of the crossing is highly
 sensitive to the amount of correlation. At large distances, the lowest triplet state
 is very close in energy to the singlet states. If the wave function is not
-spin adapted, the triplet state will mix with the singlets during the selection
+spin adapted, the triplet state will mix with the singlets during the selection,
 and the convergence of the {\cipsi} calculations to the correct states is not guaranteed.
 
 \begin{figure}
@@ -678,8 +678,8 @@ determinants in the selected CI algorithm.
 The presented examples have illustrated different situations where
 spin adaptation is important within {\sci}.  When comparing wave functions, considering the
 number of {\csf s} is more relevant than the number of Slater determinants and
-considering {\sop s} allows to stay in the determinant framework while still
-benefiting from the consistence brought by {\csf s}.
+considering {\sop s} allows one to stay in the determinant framework while still
+benefiting from the consistency brought by {\csf s}.
 Finally, we would like to emphasize that this spin adaptation procedure can be
 applied to any selected CI method: CIPSI, heat-bath CI, machine learning CI,
 Monte Carlo CI, \textit{etc}.
@@ -692,6 +692,8 @@ The authors gratefully acknowledge Sean Eron Anderson for creating the
 This work was performed using HPC resources from CALMIP (Toulouse) under
 allocation 2018-0510 and from GENCI-TGCC (Grant 2018-A0040801738).
 KG acknowledges support from grant number CHE1762337 from the U.S. National Science Foundation.
+Fortran/C/++ implementations of the Fig.~2 algorithm are available at \url{https://github.com/TApplencourt/occ2det}. 
+
 \end{acknowledgments}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
