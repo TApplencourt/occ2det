@@ -111,7 +111,7 @@ increase the computational cost.\cite{Knowles_1984,Olsen_1988}
 
 In the context of heat-bath selection, Holmes \textit{et al} have 
 improved the spin purity of the wave functions by introducing ``time-reversal
-symmetry'', \cite{Holmes_2017} which consists in exchanging the spin labels of
+symmetry'', \cite{Holmes_2017} which consists of exchanging the spin labels of
 the electrons.
 However, when the number of open shells is large, time-reversal symmetry is not
 sufficient to generate all the required spin permutations among the open shells
@@ -160,8 +160,8 @@ Following this idea, imposing spin adaptation in \sci{} methods can be done by
 \end{enumerate}
 An efficient algorithm to achieve this procedure is presented in this paper,
 and then a modification to the Epstein-Nesbet perturbation expression is
-proposed to reduce at no cost the bias due to the lack of invariance with
-respect to the spin quantum number $m_s$.
+proposed. This modification introduces no additional cost, and it reduces the
+bias due to the lack of invariance with respect to the spin quantum number $m_s$.
 All the presented algorithms were implemented in the open-source
 \emph{Quantum Package} software.\cite{qp}
 
@@ -184,13 +184,13 @@ determinant,\cite{Pauncz_1989}
 the product of a determinant of $\up$ spin-orbitals with a determinant of $\dn$
 spin-orbitals.
 Such a representation can be encoded as a pair of bit strings $(\md_i,\md_j)$,
-where both bitstring are of length $\Norb$, the number of molecular orbitals.
+where each bitstring is of length $\Norb$, the number of molecular orbitals.
 The spin-orbitals originate from a restricted Hartree-Fock or a complete
 active space (CAS) SCF calculation, such that the spatial parts of the
 spin-orbitals are common to the $\up$ and $\dn$ spin-orbitals.
-Within a bit string, each bit corresponds to a spin-orbital
-which is occupied when the bit is set to \one, or empty if the bit is
-set to \zero.  In low-level languages such as Fortran or C, a bit
+Within a bit string, each bit corresponds to a spin-orbital; the bit is set
+to \one if the orbital is occupied, and it is set to \zero if the orbital is empty.
+In low-level languages such as Fortran or C, a bit
 string may be stored as an array of $\Nint$ 64-bit integers, where 
 \begin{equation}
   \Nint = \left \lfloor \frac{\Norb-1}{64} \right \rfloor + 1,
